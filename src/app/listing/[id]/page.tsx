@@ -37,9 +37,10 @@ const mockListings = [
   }
 ];
 
-export default function ListingDetail({ params }: { params: { id: string } }) {
+export default async function ListingDetail({ params }: { params: Promise<{ id: string }> }) {
   // Find listing or fallback
-  const listing = mockListings.find(l => l.id === parseInt(params.id)) || mockListings[1];
+  const resolvedParams = await params;
+  const listing = mockListings.find(l => l.id === parseInt(resolvedParams.id)) || mockListings[1];
 
   return (
     <div className={styles.pageContainer}>

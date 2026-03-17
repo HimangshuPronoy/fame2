@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./SearchBar.module.css";
 
 export default function SearchBar() {
@@ -9,9 +10,9 @@ export default function SearchBar() {
         className={styles.input}
       />
       <div className={styles.buttonWrapper}>
-        <button className={styles.searchButton}>
+        <Link href="/listings" className={styles.searchButton}>
           EXPLORE NOW
-        </button>
+        </Link>
       </div>
     </div>
   );

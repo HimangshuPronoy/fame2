@@ -157,9 +157,9 @@ export default function ListingsPage() {
   const [typeOpen, setTypeOpen] = useState(true);
   const [priceOpen, setPriceOpen] = useState(true);
 
-  // Filter States — no default; show all on first load
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedPrices, setSelectedPrices] = useState<string[]>([]);
+  // Store max price, default high enough to show everything
+  const [maxPrice, setMaxPrice] = useState<number>(500);
 
   const toggleCategory = (category: string) => {
     setSelectedCategories(prev => 
@@ -169,34 +169,21 @@ export default function ListingsPage() {
     );
   };
 
-  const togglePrice = (priceRange: string) => {
-    setSelectedPrices(prev => 
-      prev.includes(priceRange)
-        ? prev.filter(p => p !== priceRange)
-        : [...prev, priceRange]
-    );
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMaxPrice(Number(e.target.value));
   };
 
   const removeFilter = (type: 'category' | 'price', value: string) => {
     if (type === 'category') {
       setSelectedCategories(prev => prev.filter(c => c !== value));
     } else {
-      setSelectedPrices(prev => prev.filter(p => p !== value));
+      setMaxPrice(500); // reset to max
     }
   };
 
-  // Helper to check if a listing matches the price range (simple mockup logic mapping)
-  const matchesPrice = (listingPrice: string, ranges: string[]) => {
-    if (ranges.length === 0) return true;
+  const matchesPrice = (listingPrice: string) => {
     const numericPrice = parseInt(listingPrice.replace(/[^0-9]/g, ''));
-    
-    return ranges.some(range => {
-      if (range === "Under $50") return numericPrice < 50;
-      if (range === "$50 - $150") return numericPrice >= 50 && numericPrice <= 150;
-      if (range === "$150 - $300") return numericPrice > 150 && numericPrice <= 300;
-      if (range === "> $300") return numericPrice > 300;
-      return true;
-    });
+    return numericPrice <= maxPrice;
   };
 
   // derived filtered listings
@@ -208,7 +195,7 @@ export default function ListingsPage() {
         return listing.category === cat;
       });
 
-    const priceMatch = selectedPrices.length === 0 || matchesPrice(listing.price, selectedPrices);
+    const priceMatch = matchesPrice(listing.price);
 
     const cityMatch = listing.location.toLowerCase().includes(activeLocation.toLowerCase());
 
@@ -286,34 +273,21 @@ export default function ListingsPage() {
               
               {priceOpen && (
                 <div className={styles.checkboxList}>
-                  {[
-                    "Under $50",
-                    "$50 - $150",
-                    "$150 - $300",
-                    "> $300"
-                  ].map(priceRange => (
-                    <label key={priceRange} className={styles.checkboxItem}>
-                      <input 
-                        type="checkbox" 
-                        checked={selectedPrices.includes(priceRange)}
-                        onChange={() => togglePrice(priceRange)}
-                      />
-                      <span className={styles.checkboxCustom}></span>
-                      {priceRange}
-                    </label>
-                  ))}
-                  
-                  {/* Slider visual mockup */}
-                  <div className={styles.sliderContainer}>
-                    <div className={styles.sliderTrack}>
-                      <div className={styles.sliderFill}></div>
-                      <div className={styles.sliderHandle} style={{left: '20%'}}></div>
-                      <div className={styles.sliderHandle} style={{left: '80%'}}></div>
+                  {/* Native Range Slider */}
+                  <div className={styles.nativeSliderContainer}>
+                    <div className={styles.sliderHeader}>
+                      <span>$0</span>
+                      <span className={styles.currentMaxPrice}>Up to ${maxPrice}</span>
                     </div>
-                    <div className={styles.sliderLabels}>
-                      <span>$50</span>
-                      <span>$300</span>
-                    </div>
+                    <input 
+                      type="range"
+                      min="0"
+                      max="500"
+                      step="10"
+                      value={maxPrice}
+                      onChange={handlePriceChange}
+                      className={styles.priceSlider}
+                    />
                   </div>
                 </div>
               )}
@@ -335,12 +309,12 @@ export default function ListingsPage() {
                   <span className={styles.removePill} onClick={() => removeFilter('category', cat)}>×</span>
                 </span>
               ))}
-              {selectedPrices.map(price => (
-                <span key={price} className={styles.selectedPill}>
-                  {price} 
-                  <span className={styles.removePill} onClick={() => removeFilter('price', price)}>×</span>
+              {maxPrice < 500 && (
+                <span className={styles.selectedPill}>
+                  Up to ${maxPrice} 
+                  <span className={styles.removePill} onClick={() => removeFilter('price', '')}>×</span>
                 </span>
-              ))}
+              )}
             </div>
           </div>
 
