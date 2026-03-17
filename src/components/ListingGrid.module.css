@@ -1,0 +1,291 @@
+.section {
+  padding: 60px 0 100px;
+  background-color: var(--bg);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.header {
+  text-align: center;
+  /* Removed margin-bottom since headerRow controls it now */
+}
+
+.navControls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px; /* align with title baseline roughly */
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.navBtn:hover {
+  background-color: var(--text-main);
+  color: var(--card-bg);
+  border-color: var(--text-main);
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.grid {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.grid::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.card {
+  flex: 0 0 calc(100vw - 48px); /* Full width on mobile minus padding */
+  max-width: 400px; /* Fixed maximum width per card */
+  scroll-snap-align: start;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 66.66%; /* 3:2 */
+  background-color: #f1f1f1;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.badges {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.badgeOpen {
+  background-color: #22c55e;
+}
+
+.badgeFeatured {
+  background-color: #3b82f6;
+  opacity: 0.9;
+}
+
+.authorAvatar {
+  position: absolute;
+  bottom: -20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid var(--card-bg);
+  background-color: #fff;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.avatarImage {
+  object-fit: cover;
+}
+
+.content {
+  padding: 24px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+}
+
+.categoryInfo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.catCount {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  background-color: #d1d5db;
+  border-radius: 50%;
+}
+
+.ratingInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+
+.cardSubtitle {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.detailsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.detailIcon {
+  color: var(--accent); /* Red icon color from reference */
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.priceContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.priceLabel {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.priceValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent); /* Red price from reference */
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s;
+}
+
+.actionBtn:hover {
+  opacity: 0.7;
+}
+
+.countBadge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: var(--accent);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heartBtn {
+  background-color: var(--bg-subtle);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-left: 8px;
+}

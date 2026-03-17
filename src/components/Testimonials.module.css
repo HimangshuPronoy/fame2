@@ -1,0 +1,113 @@
+.section {
+  padding: 100px 0;
+  background-color: #ffffff;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: #111827;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.description {
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.carouselContainer {
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+.carousel {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 40px;
+  /* Hide scrollbar */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  min-width: 400px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 40px;
+  scroll-snap-align: start;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+}
+
+@media (max-width: 768px) {
+  .card {
+    min-width: 300px;
+    padding: 24px;
+  }
+}
+
+.authorRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatar {
+  object-fit: cover;
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.authorName {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.authorRole {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.quote {
+  font-size: 1.1rem;
+  color: #6b7280;
+  line-height: 1.7;
+  font-style: italic;
+}

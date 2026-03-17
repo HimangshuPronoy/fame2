@@ -1,0 +1,92 @@
+.dashboardContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: #fafafa; /* Subtle off-white for main area */
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #ffffff;
+  border-right: 1px solid #eaedf1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logoWrapper {
+  margin-bottom: 56px;
+  padding-left: 12px;
+}
+
+.logo {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.navItem:hover {
+  color: #111827;
+}
+
+/* Let's simulate active state on the first item for the aesthetic */
+.navItem:first-of-type {
+  color: #111827;
+  font-weight: 600;
+}
+
+.footerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  border-top: 1px solid #eaedf1;
+  padding-top: 32px;
+}
+
+.logout:hover {
+  color: #ef4444;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
