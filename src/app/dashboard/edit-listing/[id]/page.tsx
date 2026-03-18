@@ -39,6 +39,13 @@ export default function EditListingPage() {
       return;
     }
     
+    // Admin-only access
+    if (profile?.role !== "admin") {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+    
     async function fetchListing() {
       const { data, error } = await supabase
         .from("listings")
@@ -47,13 +54,6 @@ export default function EditListingPage() {
         .single();
       
       if (error || !data) {
-        setNotFound(true);
-        setLoading(false);
-        return;
-      }
-      
-      // Check if user owns this listing or is admin
-      if (data.user_id !== user!.id && profile?.role !== "admin") {
         setNotFound(true);
         setLoading(false);
         return;
@@ -112,7 +112,7 @@ export default function EditListingPage() {
 
     setSaveSuccess(true);
     setTimeout(() => {
-      router.push("/dashboard/my-listings");
+      router.push("/dashboard/admin");
     }, 1500);
   };
 
@@ -131,11 +131,11 @@ export default function EditListingPage() {
     return (
       <div className={styles.container}>
         <div className={styles.notFound}>
-          <h2>Listing Not Found</h2>
-          <p>This listing doesn&apos;t exist or you don&apos;t have permission to edit it.</p>
-          <Link href="/dashboard/my-listings" className={styles.backBtn}>
+          <h2>Access Denied</h2>
+          <p>Only administrators can edit listings.</p>
+          <Link href="/dashboard/admin" className={styles.backBtn}>
             <ArrowLeft size={18} />
-            Back to My Listings
+            Back to Admin Dashboard
           </Link>
         </div>
       </div>
@@ -145,13 +145,13 @@ export default function EditListingPage() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Link href="/dashboard/my-listings" className={styles.backBtn}>
+        <Link href="/dashboard/admin" className={styles.backBtn}>
           <ArrowLeft size={18} />
-          <span>Back to My Listings</span>
+          <span>Back to Admin Dashboard</span>
         </Link>
         <div>
           <h1 className={styles.title}>Edit Listing</h1>
-          <p className={styles.subtitle}>Update your listing details</p>
+          <p className={styles.subtitle}>Update listing details</p>
         </div>
       </header>
 

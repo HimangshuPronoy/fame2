@@ -23,11 +23,27 @@ const emptyForm = {
 };
 
 export default function CreateListingPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Admin-only access
+  if (!user || profile?.role !== "admin") {
+    return (
+      <div className={styles.container}>
+        <div className={styles.notFound}>
+          <h2>Access Denied</h2>
+          <p>Only administrators can create listings.</p>
+          <Link href="/dashboard" className={styles.backBtn}>
+            <ArrowLeft size={18} />
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleFormChange = (key: string, val: string) =>
     setForm((prev) => ({ ...prev, [key]: val }));
@@ -65,20 +81,20 @@ export default function CreateListingPage() {
 
     setSaveSuccess(true);
     setTimeout(() => {
-      router.push("/dashboard/user");
+      router.push("/dashboard/admin");
     }, 1500);
   };
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Link href="/dashboard/user" className={styles.backBtn}>
+        <Link href="/dashboard/admin" className={styles.backBtn}>
           <ArrowLeft size={18} />
-          <span>Back to Dashboard</span>
+          <span>Back to Admin Dashboard</span>
         </Link>
         <div>
           <h1 className={styles.title}>Create New Listing</h1>
-          <p className={styles.subtitle}>Share your favorite place with the Fame community</p>
+          <p className={styles.subtitle}>Add a new business to the platform</p>
         </div>
       </header>
 

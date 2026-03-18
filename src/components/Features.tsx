@@ -6,8 +6,8 @@ export default function Features() {
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <span className={styles.subtitle}>THREE SIMPLE STEPS</span>
-          <h2 className={styles.title}>Experience the World of Fame</h2>
+          <span className={styles.subtitle}>HOW IT WORKS</span>
+          <h2 className={styles.title}>Discover Businesses Near You</h2>
         </div>
 
         <div className={styles.stepsContainer}>
@@ -17,9 +17,9 @@ export default function Features() {
               <div className={styles.iconCircle}>
                 <Search size={24} strokeWidth={1.5} color="#111827" />
               </div>
-              <h3 className={styles.cardTitle}>Discover Nearby</h3>
+              <h3 className={styles.cardTitle}>Search & Discover</h3>
               <p className={styles.cardDesc}>
-                Search by category or keyword to find the most trending spots in your current city.
+                Find the best gyms, restaurants, spas, and nightlife in your area. AI-powered recommendations.
               </p>
             </div>
 
@@ -27,9 +27,9 @@ export default function Features() {
               <div className={styles.iconCircle}>
                 <ShieldCheck size={24} strokeWidth={1.5} color="#111827" />
               </div>
-              <h3 className={styles.cardTitle}>Verified Choice</h3>
+              <h3 className={styles.cardTitle}>Verified Quality</h3>
               <p className={styles.cardDesc}>
-                Check for the &apos;Fame Verified&apos; badge to ensure premium service and verified authenticity.
+                Every business is hand-curated and verified for quality. Only the best make it to Fame.
               </p>
             </div>
 
@@ -37,9 +37,9 @@ export default function Features() {
               <div className={styles.iconCircle}>
                 <MapPin size={24} strokeWidth={1.5} color="#111827" />
               </div>
-              <h3 className={styles.cardTitle}>Experience Excellence</h3>
+              <h3 className={styles.cardTitle}>Visit & Enjoy</h3>
               <p className={styles.cardDesc}>
-                Use Fame hooks for instant access or book directly through our verified partners.
+                Get directions, contact info, and all the details you need to experience the best spots.
               </p>
             </div>
           </div>

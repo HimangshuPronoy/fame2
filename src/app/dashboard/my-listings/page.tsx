@@ -9,7 +9,7 @@ import { supabase, Listing } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-context";
 
 export default function MyListingsPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -20,11 +20,16 @@ export default function MyListingsPage() {
       return;
     }
     
-    async function fetchMyListings() {
+    // Only fetch if admin
+    if (profile?.role !== "admin") {
+      setLoading(false);
+      return;
+    }
+    
+    async function fetchAllListings() {
       const { data, error } = await supabase
         .from("listings")
         .select("*")
-        .eq("user_id", user!.id)
         .order("created_at", { ascending: false });
       
       if (!error && data) {
@@ -33,8 +38,8 @@ export default function MyListingsPage() {
       setLoading(false);
     }
     
-    fetchMyListings();
-  }, [user]);
+    fetchAllListings();
+  }, [user, profile]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this listing?")) return;
@@ -53,6 +58,21 @@ export default function MyListingsPage() {
     setDeleting(null);
   };
 
+  // Admin-only access check
+  if (!loading && (!user || profile?.role !== "admin")) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.emptyState}>
+          <h3 className={styles.emptyTitle}>Access Denied</h3>
+          <p className={styles.emptyDesc}>Only administrators can manage listings.</p>
+          <Link href="/dashboard" className={styles.createBtn}>
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className={styles.container}>
@@ -68,8 +88,8 @@ export default function MyListingsPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>My Listings</h1>
-          <p className={styles.subtitle}>Manage the listings you&apos;ve created</p>
+          <h1 className={styles.title}>All Listings</h1>
+          <p className={styles.subtitle}>Manage all platform listings (Admin Only)</p>
         </div>
         <Link href="/dashboard/create-listing" className={styles.createBtn}>
           <PlusCircle size={18} />
@@ -80,7 +100,7 @@ export default function MyListingsPage() {
       {listings.length === 0 ? (
         <div className={styles.emptyState}>
           <h3 className={styles.emptyTitle}>No listings yet</h3>
-          <p className={styles.emptyDesc}>Create your first listing to get started</p>
+          <p className={styles.emptyDesc}>Create the first listing to get started</p>
           <Link href="/dashboard/create-listing" className={styles.createBtn}>
             <PlusCircle size={18} />
             Create Listing

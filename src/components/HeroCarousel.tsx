@@ -60,7 +60,7 @@ export default function HeroCarousel() {
             transition={{ delay: 0.2, duration: 0.8 }}
           >
             <div className={styles.line}></div>
-            <span className={styles.subtitleTag}>CURATED EXCELLENCE</span>
+            <span className={styles.subtitleTag}>AI-POWERED DISCOVERY</span>
           </motion.div>
 
           <motion.h1 
@@ -69,8 +69,8 @@ export default function HeroCarousel() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            Discover the <br />
-            <span className={styles.italicText}>Extraordinary.</span>
+            Find the Best <br />
+            <span className={styles.italicText}>Businesses.</span>
           </motion.h1>
           
           <motion.p 
@@ -79,9 +79,8 @@ export default function HeroCarousel() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            Fame hand-verifies the world&apos;s most exclusive restaurants, secret
-            nightspots, and elite wellness centers. Welcome to the pinnacle of
-            lifestyle discovery.
+            Discover Mongolia&apos;s top-rated restaurants, gyms, spas, and nightlife.
+            Curated recommendations powered by AI, trusted by locals.
           </motion.p>
         </div>
 
