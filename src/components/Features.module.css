@@ -1,6 +1,6 @@
 .section {
   padding: 100px 0;
-  background-color: #f7f7f7;
+  background-color: #fafafa;
 }
 
 .container {
@@ -11,25 +11,25 @@
 
 .header {
   text-align: center;
-  margin-bottom: 80px;
+  margin-bottom: 72px;
 }
 
 .subtitle {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #111827;
+  color: var(--accent);
   letter-spacing: 3px;
   display: block;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .title {
   font-family: var(--font-serif);
-  font-size: 3.5rem;
-  font-weight: 500;
+  font-size: 2.75rem;
+  font-weight: 600;
   color: #111827;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -1px;
 }
 
@@ -45,14 +45,14 @@
   left: 10%;
   right: 10%;
   height: 1px;
-  background-color: #e5e7eb;
+  background: linear-gradient(to right, transparent, #e5e7eb, transparent);
   z-index: 0;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: 60px;
+  gap: 48px;
   position: relative;
   z-index: 1;
 }
@@ -80,33 +80,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-  border: 1px solid rgba(0,0,0,0.02);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  border: 1px solid #f0f0f0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card:hover .iconCircle {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.12);
+  border-color: #e0e7ff;
 }
 
 .cardTitle {
-  font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #111827;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .cardDesc {
   color: #6b7280;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.7;
 }
 
 @media (max-width: 767px) {
-  .connectingLine {
-    display: none;
-  }
+  .connectingLine { display: none; }
+  .title { font-size: 2rem; }
 }

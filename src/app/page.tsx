@@ -13,10 +13,10 @@ export default function Home() {
       <Header />
       <HeroCarousel />
       <Categories />
+      <ListingGrid />
       <Features />
       <PremiumCuration />
       <Testimonials />
-      <ListingGrid />
       <Footer />
     </main>
   );

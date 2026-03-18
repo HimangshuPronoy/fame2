@@ -25,9 +25,9 @@ export default function Footer() {
           <div className={styles.gridCol}>
             <h4 className={styles.colTitle}>Quick Links</h4>
             <ul className={styles.linkList}>
-              <li><Link href="/dashboard" className={styles.link}>Explore Listings</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Trending Locations</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Submit a Listing</Link></li>
+              <li><Link href="/listings" className={styles.link}>Explore Listings</Link></li>
+              <li><Link href="/listings" className={styles.link}>Trending Locations</Link></li>
+              <li><Link href="/dashboard/user" className={styles.link}>Submit a Listing</Link></li>
               <li><Link href="/login" className={styles.link}>Member Login</Link></li>
               <li><Link href="/dashboard/admin" className={styles.link}>Admin Portal</Link></li>
             </ul>
@@ -36,11 +36,11 @@ export default function Footer() {
           <div className={styles.gridCol}>
             <h4 className={styles.colTitle}>Categories</h4>
             <ul className={styles.linkList}>
-              <li><Link href="/dashboard" className={styles.link}>Fine Dining</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Exclusive Nightlife</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Elite Fitness</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Luxury Shopping</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Wellness Spas</Link></li>
+              <li><Link href="/listings?category=Restaurants" className={styles.link}>Fine Dining</Link></li>
+              <li><Link href="/listings?category=Nightlife" className={styles.link}>Exclusive Nightlife</Link></li>
+              <li><Link href="/listings?category=Fitness" className={styles.link}>Elite Fitness</Link></li>
+              <li><Link href="/listings?category=Retail" className={styles.link}>Luxury Shopping</Link></li>
+              <li><Link href="/listings?category=Wellness" className={styles.link}>Wellness Spas</Link></li>
             </ul>
           </div>
 

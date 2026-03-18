@@ -8,19 +8,14 @@ import styles from "./HeroCarousel.module.css";
 
 const backgrounds = [
   {
-    id: "luxury",
-    src: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=2075&ixlib=rb-4.0.3", // Replace with an opulent mansion/pool image
-    alt: "Luxury Estate",
+    id: "cocktail",
+    src: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2070", // Luxury cocktail
+    alt: "Luxury Cocktail Event",
   },
   {
-    id: "nature",
-    src: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=2074&ixlib=rb-4.0.3",
-    alt: "Nature background",
-  },
-  {
-    id: "gym",
-    src: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3",
-    alt: "Gym background",
+    id: "luxury-pool",
+    src: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&q=80&w=2070", // Luxury modern pool estate
+    alt: "Premium Estate Pool",
   },
 ];
 

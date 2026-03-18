@@ -1,0 +1,287 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Save, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
+import styles from "./edit-listing.module.css";
+import { supabase, Listing } from "@/lib/supabase";
+import { useAuth } from "@/lib/auth-context";
+import Link from "next/link";
+
+const CATEGORIES = ["Fitness", "Gym", "Restaurants", "Nightlife", "Spa", "Beauty", "Wellness", "Hotels"];
+
+export default function EditListingPage() {
+  const { user, profile } = useAuth();
+  const router = useRouter();
+  const params = useParams();
+  const listingId = params.id as string;
+  
+  const [form, setForm] = useState({
+    title: "",
+    subtitle: "",
+    description: "",
+    category: "Fitness",
+    location: "",
+    phone: "",
+    website: "",
+    price: "",
+    image_url: "",
+  });
+  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    
+    async function fetchListing() {
+      const { data, error } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("id", listingId)
+        .single();
+      
+      if (error || !data) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+      
+      // Check if user owns this listing or is admin
+      if (data.user_id !== user!.id && profile?.role !== "admin") {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+      
+      const listing = data as Listing;
+      setForm({
+        title: listing.title,
+        subtitle: listing.subtitle || "",
+        description: listing.description || "",
+        category: listing.category,
+        location: listing.location || "",
+        phone: listing.phone || "",
+        website: listing.website || "",
+        price: listing.price || "",
+        image_url: listing.image_url || "",
+      });
+      
+      setLoading(false);
+    }
+    
+    fetchListing();
+  }, [user, profile, listingId]);
+
+  const handleFormChange = (key: string, val: string) =>
+    setForm((prev) => ({ ...prev, [key]: val }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title.trim() || !user) return;
+    
+    setSaving(true);
+
+    const payload = {
+      title: form.title.trim(),
+      subtitle: form.subtitle.trim() || null,
+      description: form.description.trim() || null,
+      category: form.category,
+      location: form.location.trim() || null,
+      phone: form.phone.trim() || null,
+      website: form.website.trim() || null,
+      price: form.price.trim() || null,
+      image_url: form.image_url.trim() || null,
+    };
+
+    const { error } = await supabase
+      .from("listings")
+      .update(payload)
+      .eq("id", listingId);
+
+    if (error) {
+      alert("Error updating listing: " + error.message);
+      setSaving(false);
+      return;
+    }
+
+    setSaveSuccess(true);
+    setTimeout(() => {
+      router.push("/dashboard/my-listings");
+    }, 1500);
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>
+          <Loader2 size={32} className={styles.spinner} />
+          <p>Loading listing...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.notFound}>
+          <h2>Listing Not Found</h2>
+          <p>This listing doesn&apos;t exist or you don&apos;t have permission to edit it.</p>
+          <Link href="/dashboard/my-listings" className={styles.backBtn}>
+            <ArrowLeft size={18} />
+            Back to My Listings
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <Link href="/dashboard/my-listings" className={styles.backBtn}>
+          <ArrowLeft size={18} />
+          <span>Back to My Listings</span>
+        </Link>
+        <div>
+          <h1 className={styles.title}>Edit Listing</h1>
+          <p className={styles.subtitle}>Update your listing details</p>
+        </div>
+      </header>
+
+      <div className={styles.card}>
+        {saveSuccess ? (
+          <div className={styles.successMessage}>
+            <CheckCircle2 size={48} color="#10b981" />
+            <h3 className={styles.successTitle}>Listing Updated Successfully!</h3>
+            <p className={styles.successDesc}>Redirecting you back to your listings...</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label>Title *</label>
+              <input 
+                type="text" 
+                value={form.title} 
+                onChange={(e) => handleFormChange("title", e.target.value)} 
+                className={styles.input} 
+                placeholder="e.g. Skyline Yoga Studio" 
+                required 
+              />
+            </div>
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label>Subtitle</label>
+                <input 
+                  type="text" 
+                  value={form.subtitle} 
+                  onChange={(e) => handleFormChange("subtitle", e.target.value)} 
+                  className={styles.input} 
+                  placeholder="Short tagline" 
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Category *</label>
+                <select 
+                  className={styles.select} 
+                  value={form.category} 
+                  onChange={(e) => handleFormChange("category", e.target.value)}
+                >
+                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Description</label>
+              <textarea 
+                value={form.description} 
+                onChange={(e) => handleFormChange("description", e.target.value)} 
+                className={styles.textarea} 
+                placeholder="Describe the listing..." 
+                rows={4}
+              />
+            </div>
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label>Location</label>
+                <input 
+                  type="text" 
+                  value={form.location} 
+                  onChange={(e) => handleFormChange("location", e.target.value)} 
+                  className={styles.input} 
+                  placeholder="City, State" 
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Phone</label>
+                <input 
+                  type="text" 
+                  value={form.phone} 
+                  onChange={(e) => handleFormChange("phone", e.target.value)} 
+                  className={styles.input} 
+                  placeholder="+1-555-000-1234" 
+                />
+              </div>
+            </div>
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label>Price</label>
+                <input 
+                  type="text" 
+                  value={form.price} 
+                  onChange={(e) => handleFormChange("price", e.target.value)} 
+                  className={styles.input} 
+                  placeholder="$, $150/mo" 
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Website URL</label>
+                <input 
+                  type="url" 
+                  value={form.website} 
+                  onChange={(e) => handleFormChange("website", e.target.value)} 
+                  className={styles.input} 
+                  placeholder="https://..." 
+                />
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Cover Image URL</label>
+              <input 
+                type="url" 
+                value={form.image_url} 
+                onChange={(e) => handleFormChange("image_url", e.target.value)} 
+                className={styles.input} 
+                placeholder="https://images.unsplash.com/..." 
+              />
+              <p className={styles.hint}>Tip: Use Unsplash for high-quality free images</p>
+            </div>
+
+            <button type="submit" className={styles.submitBtn} disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 size={18} className={styles.spinner} /> Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={18} /> Save Changes
+                </>
+              )}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}

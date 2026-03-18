@@ -1,16 +1,48 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Utensils, GlassWater, Dumbbell, ShoppingBag, Plane, Sparkles } from "lucide-react";
 import styles from "./Categories.module.css";
+import { supabase } from "@/lib/supabase";
 
-const categories = [
-  { id: 1, title: "Restaurant", desc: "45 Places", icon: Utensils, color: "#ff4d4f", bg: "#fff1f0" },
-  { id: 2, title: "Nightlife", desc: "12 Places", icon: GlassWater, color: "#eb2f96", bg: "#fff0f6" },
-  { id: 3, title: "Fitness", desc: "28 Places", icon: Dumbbell, color: "#fa541c", bg: "#fff2e8" },
-  { id: 4, title: "Shopping", desc: "60 Places", icon: ShoppingBag, color: "#f5222d", bg: "#fff1f0" },
-  { id: 5, title: "Traveling", desc: "15 Places", icon: Plane, color: "#ff4d4f", bg: "#fff1f0" },
-  { id: 6, title: "Beauty", desc: "34 Places", icon: Sparkles, color: "#fa8c16", bg: "#fff7e6" },
+interface CategoryData {
+  title: string;
+  dbCategory: string;
+  icon: React.ElementType;
+  color: string;
+  bg: string;
+}
+
+const categoryConfig: CategoryData[] = [
+  { title: "Restaurant", dbCategory: "Restaurants", icon: Utensils, color: "#ff4d4f", bg: "#fff1f0" },
+  { title: "Nightlife", dbCategory: "Nightlife", icon: GlassWater, color: "#eb2f96", bg: "#fff0f6" },
+  { title: "Fitness", dbCategory: "Fitness", icon: Dumbbell, color: "#fa541c", bg: "#fff2e8" },
+  { title: "Shopping", dbCategory: "Beauty", icon: ShoppingBag, color: "#f5222d", bg: "#fff1f0" },
+  { title: "Wellness", dbCategory: "Spa", icon: Plane, color: "#9333ea", bg: "#faf5ff" },
+  { title: "Beauty", dbCategory: "Beauty", icon: Sparkles, color: "#fa8c16", bg: "#fff7e6" },
 ];
 
 export default function Categories() {
+  const [counts, setCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    async function fetchCounts() {
+      const { data } = await supabase
+        .from("listings")
+        .select("category")
+        .eq("is_active", true);
+      if (data) {
+        const c: Record<string, number> = {};
+        data.forEach((row: { category: string }) => {
+          c[row.category] = (c[row.category] || 0) + 1;
+        });
+        setCounts(c);
+      }
+    }
+    fetchCounts();
+  }, []);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -25,19 +57,19 @@ export default function Categories() {
         </div>
 
         <div className={styles.grid}>
-          {categories.map((cat) => (
-            <div key={cat.id} className={styles.card}>
-              <div 
-                className={styles.iconWrapper} 
+          {categoryConfig.map((cat) => (
+            <Link href={`/listings?category=${cat.dbCategory}`} key={cat.title} className={styles.card} style={{ textDecoration: 'none' }}>
+              <div
+                className={styles.iconWrapper}
                 style={{ backgroundColor: cat.bg, color: cat.color }}
               >
                 <cat.icon size={24} strokeWidth={1.5} />
               </div>
               <div className={styles.cardContent}>
                 <h3 className={styles.cardTitle}>{cat.title}</h3>
-                <p className={styles.cardDesc}>{cat.desc}</p>
+                <p className={styles.cardDesc}>{counts[cat.dbCategory] ?? 0} Places</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
