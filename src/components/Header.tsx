@@ -31,16 +31,14 @@ export default function Header() {
           <div className={styles.dropdownContainer}>
             <button className={styles.navLink}>Categories</button>
             <div className={styles.dropdownMenu}>
-              <Link href="/listings?category=Restaurants" className={styles.dropdownItem}>Fine Dining</Link>
+              <Link href="/listings?category=Gym" className={styles.dropdownItem}>Gyms & Fitness</Link>
+              <Link href="/listings?category=Restaurants" className={styles.dropdownItem}>Restaurants</Link>
+              <Link href="/listings?category=Spa" className={styles.dropdownItem}>Spas & Wellness</Link>
+              <Link href="/listings?category=Beauty" className={styles.dropdownItem}>Beauty Salons</Link>
               <Link href="/listings?category=Nightlife" className={styles.dropdownItem}>Nightlife</Link>
-              <Link href="/listings?category=Fitness" className={styles.dropdownItem}>Elite Fitness</Link>
-              <Link href="/listings?category=Spa" className={styles.dropdownItem}>Wellness Spas</Link>
             </div>
           </div>
-          <Link href="/listings" className={styles.navLink}>Explore</Link>
-          <Link href="/concierge" className={styles.navLink}>Concierge</Link>
-          <Link href="/journal" className={styles.navLink}>Journal</Link>
-          <Link href="/partners" className={styles.navLink}>For Partners</Link>
+          <Link href="/listings" className={styles.navLink}>Browse All</Link>
         </nav>
 
         <div className={styles.authGroup}>
@@ -73,14 +71,12 @@ export default function Header() {
       {/* Mobile Navigation Dropdown */}
       {mobileMenuOpen && (
         <div className={styles.mobileNav}>
-          <Link href="/listings?category=Restaurants" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Fine Dining</Link>
+          <Link href="/listings?category=Gym" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Gyms & Fitness</Link>
+          <Link href="/listings?category=Restaurants" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Restaurants</Link>
+          <Link href="/listings?category=Spa" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Spas & Wellness</Link>
+          <Link href="/listings?category=Beauty" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Beauty Salons</Link>
           <Link href="/listings?category=Nightlife" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Nightlife</Link>
-          <Link href="/listings?category=Fitness" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Elite Fitness</Link>
-          <Link href="/listings?category=Spa" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Wellness Spas</Link>
-          <Link href="/listings" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Explore</Link>
-          <Link href="/concierge" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Concierge</Link>
-          <Link href="/journal" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Journal</Link>
-          <Link href="/partners" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>For Partners</Link>
+          <Link href="/listings" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>Browse All</Link>
           <div className={styles.mobileAuthGroup}>
             {user ? (
               <>
