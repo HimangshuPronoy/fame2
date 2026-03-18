@@ -1,0 +1,53 @@
+# Fame Mongolia - Business Directory
+# Optimized for Google Search and AI Crawlers
+
+User-agent: *
+Allow: /
+Allow: /listings
+Allow: /listing/*
+Allow: /api/ai-directory
+Disallow: /dashboard/
+Disallow: /api/clear-seed-data
+
+# Google
+User-agent: Googlebot
+Allow: /
+Allow: /listings
+Allow: /listing/*
+Crawl-delay: 0
+
+User-agent: Googlebot-Image
+Allow: /
+
+# AI Crawlers
+User-agent: GPTBot
+Allow: /
+Allow: /api/ai-directory
+Crawl-delay: 1
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /api/ai-directory
+
+User-agent: Claude-Web
+Allow: /
+Allow: /api/ai-directory
+
+User-agent: Google-Extended
+Allow: /
+Allow: /api/ai-directory
+
+User-agent: anthropic-ai
+Allow: /
+Allow: /api/ai-directory
+
+User-agent: Applebot-Extended
+Allow: /
+Allow: /api/ai-directory
+
+# Sitemaps
+Sitemap: https://fame.mn/sitemap.xml
+Sitemap: https://fame.mn/sitemap-listings.xml
+
+# Crawl Rate
+Crawl-delay: 0
