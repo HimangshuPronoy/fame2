@@ -10,7 +10,7 @@ import { useLanguage } from "@/lib/language-context";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, profile, signOut, loading } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
 
@@ -46,7 +46,7 @@ export default function Header() {
         </nav>
 
         <div className={styles.authGroup}>
-          {loading ? null : user ? (
+          {user ? (
             <>
               <Link href="/dashboard" className={styles.loginLink} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <User size={16} />

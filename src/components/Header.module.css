@@ -35,13 +35,14 @@
 }
 
 .logoDot {
-  color: var(--accent-blue); /* A subtle dot color, or gold depending on ref */
+  color: var(--accent);
 }
 
 .navDesktop {
   display: none;
 }
 
+/* Initial state for authGroup (hidden on mobile) */
 .authGroup {
   display: none;
 }
@@ -138,10 +139,14 @@
   padding-left: 28px;
 }
 
-.authGroup {
-  display: flex;
-  align-items: center;
-  gap: 24px;
+/* authGroup is already handled in media query at line 68 if we keep it there,
+   but let's define the desktop styles clearly here. */
+@media (min-width: 768px) {
+  .authGroup {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
 }
 
 .loginLink {
