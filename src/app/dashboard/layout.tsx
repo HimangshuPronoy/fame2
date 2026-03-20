@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside className={styles.sidebar}>
         <div className={styles.logoWrapper}>
           <Link href="/" className={styles.logo}>
-            Fame<span style={{ color: '#d4af37' }}>.</span>
+            Fame<span style={{ color: 'var(--accent)' }}>.</span>
           </Link>
         </div>
 

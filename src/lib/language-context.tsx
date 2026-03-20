@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Language, detectLanguage, setLanguage as saveLanguage, t as translate } from './i18n';
 
 interface LanguageContextType {
@@ -26,7 +26,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     saveLanguage(lang);
   };
 
-  const t = (key: string) => translate(key, language);
+  const t = useCallback((key: string) => translate(key, language), [language]);
 
   // Prevent hydration mismatch
   if (!mounted) {

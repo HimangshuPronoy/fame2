@@ -100,7 +100,11 @@ export default function UserDashboard() {
         setLoading(false);
       }
     }
-    fetchData();
+    if (user) {
+      fetchData();
+    } else {
+      setLoading(false);
+    }
   }, [user, t]);
 
   const displayName = profile?.full_name ?? user?.email?.split("@")[0] ?? "there";

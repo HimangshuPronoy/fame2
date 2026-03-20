@@ -24,12 +24,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    if (data) setProfile(data as Profile);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+      if (error) throw error;
+      if (data) setProfile(data as Profile);
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    }
   };
 
   useEffect(() => {
@@ -37,6 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) fetchProfile(session.user.id);
+      setLoading(false);
+    }).catch(err => {
+      console.error("Error getting session:", err);
       setLoading(false);
     });
 
