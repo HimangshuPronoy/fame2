@@ -120,6 +120,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (user && profile?.role === 'admin') {
       fetchData();
+    } else if (user && profile) {
+      setDbLoading(false);
     }
   }, [user, profile, fetchData]);
 

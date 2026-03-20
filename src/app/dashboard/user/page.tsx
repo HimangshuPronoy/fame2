@@ -29,7 +29,10 @@ export default function UserDashboard() {
 
   useEffect(() => {
     async function fetchData() {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       
       setLoading(true);
       

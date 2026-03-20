@@ -374,7 +374,7 @@
 
 .progressFillMini {
   height: 100%;
-  background: #eab308;
+  background: var(--accent);
   border-radius: 3px;
 }
 
@@ -395,6 +395,12 @@
   color: var(--text-main);
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.supportBtn:hover {
+  border-color: var(--accent);
+  background: #f8fafc;
 }
 
 @media (max-width: 640px) {

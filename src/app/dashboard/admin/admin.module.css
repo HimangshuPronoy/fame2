@@ -141,9 +141,9 @@
 }
 
 .input:focus, .select:focus {
-  border-color: #d4af37;
+  border-color: var(--accent);
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 .submitBtn {
@@ -164,7 +164,9 @@
 }
 
 .submitBtn:hover {
-  background: #000000;
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
 }
 
 .submitBtn:disabled {
@@ -231,12 +233,12 @@
 .tag {
   display: inline-block;
   padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(59, 130, 246, 0.05);
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #d4af37;
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  color: var(--accent);
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .status {
@@ -320,8 +322,8 @@
 }
 
 .activeTab {
-  color: #d4af37;
-  border-bottom-color: #d4af37;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .tabIcon {
@@ -346,8 +348,8 @@
 }
 
 .activeTab .badge {
-  background: #d4af37;
-  color: #000;
+  background: var(--accent);
+  color: #fff;
 }
 
 .roleBadge {

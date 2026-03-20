@@ -16,7 +16,10 @@ export default function BusinessOwnerDashboard() {
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
     
     setLoading(true);
     

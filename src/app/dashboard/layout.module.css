@@ -24,7 +24,7 @@
   width: 32px;
   height: 32px;
   border: 3px solid rgba(0, 0, 0, 0.05);
-  border-top-color: #d4af37;
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -58,7 +58,7 @@
   color: #000000;
   letter-spacing: -1px;
   text-decoration: none;
-  background: linear-gradient(135deg, #000 0%, #d4af37 100%);
+  background: linear-gradient(135deg, #0f172a 0%, var(--accent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -80,7 +80,7 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #d4af37, #b8860b);
+  background: linear-gradient(135deg, var(--accent), #2563eb);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,8 +209,8 @@
 
 .searchWrapper:focus-within {
   background: rgba(0, 0, 0, 0.03);
-  border-color: rgba(212, 175, 55, 0.3);
-  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.05);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.05);
 }
 
 .searchIcon {
@@ -297,8 +297,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #d4af37, #b8860b);
-  color: #000;
+  background: linear-gradient(135deg, var(--accent), #2563eb);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
