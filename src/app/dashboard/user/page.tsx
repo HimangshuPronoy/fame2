@@ -6,46 +6,106 @@ import { Star, Heart, Calendar, Award, Users, Sparkles, History, UserCheck, Sear
 import Image from "next/image";
 import styles from "./user.module.css";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 import { supabase, Listing } from "@/lib/supabase";
+
+interface Activity {
+  id: string;
+  type: 'booking' | 'review';
+  content: string;
+  date: string;
+}
 
 export default function UserDashboard() {
   const { user, profile } = useAuth();
-  const [savedListings, setSavedListings] = useState<string[]>([]);
+  const { t } = useLanguage();
+  const [savedCount, setSavedCount] = useState(0);
+  const [bookingsCount, setBookingsCount] = useState(0);
+  const [reviewsCount, setReviewsCount] = useState(0);
+  const [famePoints, setFamePoints] = useState(0);
   const [loading, setLoading] = useState(true);
   const [recentListings, setRecentListings] = useState<Listing[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
     async function fetchData() {
-      // Recent listings
-      const { data } = await supabase
-        .from("listings")
-        .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(4);
-      if (user) {
-        const { data: saved } = await supabase
-          .from("saved_listings")
-          .select("listing_id")
-          .eq("user_id", user.id);
-        if (saved) setSavedListings(saved.map((s: { listing_id: string }) => s.listing_id));
-      }
+      if (!user) return;
+      
+      setLoading(true);
+      
+      try {
+        // 1. Fetch counts
+        const [savedRes, bookingsRes, reviewsRes] = await Promise.all([
+          supabase.from("saved_listings").select("id", { count: 'exact', head: true }).eq("user_id", user.id),
+          supabase.from("bookings").select("id", { count: 'exact', head: true }).eq("user_id", user.id),
+          supabase.from("reviews").select("id", { count: 'exact', head: true }).eq("user_id", user.id)
+        ]);
 
-      if (data) setRecentListings(data as Listing[]);
-      setLoading(false);
+        if (savedRes.count !== null) setSavedCount(savedRes.count);
+        if (bookingsRes.count !== null) setBookingsCount(bookingsRes.count);
+        if (reviewsRes.count !== null) setReviewsCount(reviewsRes.count);
+        
+        // Fame points (Mock logic for now, could be based on reviews/bookings)
+        setFamePoints((reviewsRes.count || 0) * 100 + (bookingsRes.count || 0) * 50);
+
+        // 2. Fetch recent listings (recommendations)
+        const { data: listingsData } = await supabase
+          .from("listings")
+          .select("*")
+          .eq("is_active", true)
+          .order("created_at", { ascending: false })
+          .limit(3);
+        
+        if (listingsData) setRecentListings(listingsData as Listing[]);
+
+        // 3. Fetch simulated activity (since we don't have a dedicated activity table yet)
+        // In a real app, you'd fetch from a 'user_activity' table.
+        // We'll synthesize it from bookings and reviews for now.
+        const { data: recentBookings } = await supabase
+          .from("bookings")
+          .select("*, listings(title)")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(2);
+          
+        const { data: recentReviews } = await supabase
+          .from("reviews")
+          .select("*, listings(title)")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(2);
+
+        const combinedActivity: Activity[] = [
+          ...(recentBookings || []).map(b => ({
+            id: `b-${b.id}`,
+            type: 'booking' as const,
+            content: `Booking confirmed at ${b.listings?.title}`,
+            date: b.created_at
+          })),
+          ...(recentReviews || []).map(r => ({
+            id: `r-${r.id}`,
+            type: 'review' as const,
+            content: `You left a ${r.rating}-star review for ${r.listings?.title}`,
+            date: r.created_at
+          }))
+        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        setActivities(combinedActivity);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchData();
   }, [user]);
 
-
-
   const displayName = profile?.full_name ?? user?.email?.split("@")[0] ?? "there";
-
 
   if (loading) {
     return (
       <div className={styles.container} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
-        <p className={styles.loadingText}>Loading your personalized dashboard...</p>
+        <p className={styles.loadingText}>{t('dashboard.loading')}</p>
       </div>
     );
   }
@@ -54,13 +114,13 @@ export default function UserDashboard() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.headerTitleGroup}>
-          <h1 className={styles.title}>Welcome back, {displayName}</h1>
-          <p className={styles.subtitle}>Discover the best of Ulaanbaatar, curated for you.</p>
+          <h1 className={styles.title}>{t('dashboard.user.welcome').replace('{name}', displayName)}</h1>
+          <p className={styles.subtitle}>{t('dashboard.user.subtitle')}</p>
         </div>
         <div className={styles.headerActions}>
           <Link href="/listings" className={styles.primaryBtn}>
             <Search size={18} />
-            <span>Explore Now</span>
+            <span>{t('dashboard.user.explore')}</span>
           </Link>
         </div>
       </header>
@@ -69,48 +129,48 @@ export default function UserDashboard() {
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>Saved Items</span>
+            <span className={styles.statLabel}>{t('dashboard.user.stats.saved')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>{savedListings.length}</span>
+              <span className={styles.statValue}>{savedCount}</span>
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#fff1f2', color: '#f43f5e' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e' }}>
             <Heart size={24} />
           </div>
         </div>
         
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>My Bookings</span>
+            <span className={styles.statLabel}>{t('dashboard.user.stats.bookings')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>12</span>
+              <span className={styles.statValue}>{bookingsCount}</span>
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#f0fdf4', color: '#22c55e' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>
             <Calendar size={24} />
           </div>
         </div>
         
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>Total Reviews</span>
+            <span className={styles.statLabel}>{t('dashboard.user.stats.reviews')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>8</span>
+              <span className={styles.statValue}>{reviewsCount}</span>
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#fefce8', color: '#eab308' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#eab308' }}>
             <Star size={24} />
           </div>
         </div>
         
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>Fame Points</span>
+            <span className={styles.statLabel}>{t('dashboard.user.stats.points')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>1,240</span>
+              <span className={styles.statValue}>{famePoints.toLocaleString()}</span>
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#eff6ff', color: '#3b82f6' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
             <Award size={24} />
           </div>
         </div>
@@ -123,13 +183,13 @@ export default function UserDashboard() {
             <div className={styles.sectionHeader}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Sparkles size={20} className={styles.sparkleIcon} />
-                <h2 className={styles.sectionTitle}>Recommended for You</h2>
+                <h2 className={styles.sectionTitle}>{t('dashboard.user.recommendations.title')}</h2>
               </div>
-              <Link href="/listings" className={styles.textLink}>View all recommendations</Link>
+              <Link href="/listings" className={styles.textLink}>{t('dashboard.user.recommendations.viewAll')}</Link>
             </div>
             
             <div className={styles.recommendationsList}>
-              {recentListings.slice(0, 3).map((listing: Listing) => (
+              {recentListings.map((listing: Listing) => (
                 <Link href={`/listing/${listing.id}`} key={listing.id} className={styles.recItem}>
                   <div className={styles.recImgWrapper}>
                     {listing.image_url ? (
@@ -143,7 +203,7 @@ export default function UserDashboard() {
                     <span className={styles.recCategory}>{listing.category}</span>
                     <div className={styles.recRating}>
                       <Star size={12} fill="#eab308" color="#eab308" />
-                      <span>{listing.rating} ({listing.reviews} reviews)</span>
+                      <span>{listing.rating} ({listing.reviews} {t('listing.reviews')})</span>
                     </div>
                   </div>
                 </Link>
@@ -153,31 +213,21 @@ export default function UserDashboard() {
 
           <section className={styles.mainSection} style={{ marginTop: '24px' }}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>My Recent Activity</h2>
+              <h2 className={styles.sectionTitle}>{t('dashboard.user.activity.title')}</h2>
               <History size={18} className={styles.historyIcon} />
             </div>
             <div className={styles.activityTimeline}>
-              <div className={styles.timelineItem}>
-                <div className={styles.timelineDot} />
-                <div className={styles.timelineContent}>
-                  <p>You bookmarked <strong>Grand Restaurant</strong></p>
-                  <span>2 hours ago</span>
+              {activities.length > 0 ? activities.map((activity) => (
+                <div key={activity.id} className={styles.timelineItem}>
+                  <div className={styles.timelineDot} />
+                  <div className={styles.timelineContent}>
+                    <p>{activity.content}</p>
+                    <span>{new Date(activity.date).toLocaleDateString()}</span>
+                  </div>
                 </div>
-              </div>
-              <div className={styles.timelineItem}>
-                <div className={styles.timelineDot} />
-                <div className={styles.timelineContent}>
-                  <p>Booking confirmed at <strong>Alpha Fitness</strong></p>
-                  <span>Yesterday</span>
-                </div>
-              </div>
-              <div className={styles.timelineItem}>
-                <div className={styles.timelineDot} />
-                <div className={styles.timelineContent}>
-                  <p>You left a 5-star review for <strong>Sky Spa</strong></p>
-                  <span>3 days ago</span>
-                </div>
-              </div>
+              )) : (
+                <p className={styles.emptyActivity}>No recent activity found.</p>
+              )}
             </div>
           </section>
         </div>
@@ -187,22 +237,24 @@ export default function UserDashboard() {
           <section className={styles.sideWidget + ' ' + styles.aiWidget}>
             <div className={styles.widgetHeader}>
               <Sparkles size={18} className={styles.aiIcon} />
-              <h3 className={styles.widgetTitle}>AI Assistant Tips</h3>
+              <h3 className={styles.widgetTitle}>{t('dashboard.user.aiTips.title')}</h3>
             </div>
-            <p className={styles.aiText}>Based on your interest in <strong>Gyms</strong>, you might enjoy the new HIIT classes at Alpha Fitness next week!</p>
+            <p className={styles.aiText}>
+              Based on your interest in <strong>Fitness</strong>, you might enjoy the new HIIT classes at Alpha Fitness next week!
+            </p>
             <button className={styles.aiActionBtn}>Show More Tips</button>
           </section>
 
           <section className={styles.sideWidget}>
-            <h3 className={styles.widgetTitle}>Quick Access</h3>
+            <h3 className={styles.widgetTitle}>{t('dashboard.user.quickAccess.title')}</h3>
             <div className={styles.quickLinks}>
               <Link href="/dashboard/saved" className={styles.quickLink}>
                 <Heart size={16} />
-                <span>My Saved Items</span>
+                <span>{t('dashboard.nav.savedItems')}</span>
               </Link>
               <Link href="/dashboard/bookings" className={styles.quickLink}>
                 <Calendar size={16} />
-                <span>Manage Bookings</span>
+                <span>{t('dashboard.nav.myBookings')}</span>
               </Link>
               <Link href="/concierge" className={styles.quickLink}>
                 <Users size={16} />
@@ -217,19 +269,25 @@ export default function UserDashboard() {
                 <UserCheck size={20} />
               </div>
               <div>
-                <h4 className={styles.statusName}>Gold Member</h4>
-                <p className={styles.statusPoints}>760 points to Platinum</p>
+                <h4 className={styles.statusName}>{t('dashboard.user.status.title')}</h4>
+                <p className={styles.statusPoints}>
+                  {famePoints < 1000 
+                    ? t('dashboard.user.status.points').replace('{points}', (1000 - famePoints).toString()).replace('{nextLevel}', 'Gold')
+                    : famePoints < 5000
+                    ? t('dashboard.user.status.points').replace('{points}', (5000 - famePoints).toString()).replace('{nextLevel}', 'Platinum')
+                    : 'Elite Member'}
+                </p>
               </div>
             </div>
             <div className={styles.progressBarMini}>
-              <div className={styles.progressFillMini} style={{ width: '45%' }} />
+              <div className={styles.progressFillMini} style={{ width: `${Math.min(100, (famePoints % 1000) / 10)}%` }} />
             </div>
           </section>
 
           <section className={styles.sideWidget}>
-             <h3 className={styles.widgetTitle}>Member Support</h3>
-             <p className={styles.supportText}>Have a question about your membership or bookings?</p>
-             <button className={styles.supportBtn}>Contact Support</button>
+             <h3 className={styles.widgetTitle}>{t('dashboard.user.support.title')}</h3>
+             <p className={styles.supportText}>{t('dashboard.user.support.text')}</p>
+             <button className={styles.supportBtn}>{t('dashboard.user.support.button')}</button>
           </section>
         </div>
       </div>

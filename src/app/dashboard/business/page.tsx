@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 import { supabase, Listing, MonthlyReport } from "@/lib/supabase";
 import { BarChart3, MessageSquare, TrendingUp, Calendar, CheckCircle2, Target, Share2, Clock, Plus } from "lucide-react";
 import styles from "./business.module.css";
@@ -9,6 +10,7 @@ import Link from "next/link";
 
 export default function BusinessOwnerDashboard() {
   const { user, profile } = useAuth();
+  const { t } = useLanguage();
   const [listings, setListings] = useState<Listing[]>([]);
   const [reports, setReports] = useState<MonthlyReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,24 +20,28 @@ export default function BusinessOwnerDashboard() {
     
     setLoading(true);
     
-    // Fetch business owner's listings
-    const { data: listingsData } = await supabase
-      .from('listings')
-      .select('*')
-      .eq('business_owner_id', user.id);
-    
-    // Fetch monthly reports
-    const { data: reportsData } = await supabase
-      .from('monthly_reports')
-      .select('*')
-      .eq('business_owner_id', user.id)
-      .order('month', { ascending: false })
-      .limit(6);
-    
-    if (listingsData) setListings(listingsData);
-    if (reportsData) setReports(reportsData);
-    
-    setLoading(false);
+    try {
+      // Fetch business owner's listings
+      const { data: listingsData } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('business_owner_id', user.id);
+      
+      // Fetch monthly reports
+      const { data: reportsData } = await supabase
+        .from('monthly_reports')
+        .select('*')
+        .eq('business_owner_id', user.id)
+        .order('month', { ascending: false })
+        .limit(6);
+      
+      if (listingsData) setListings(listingsData);
+      if (reportsData) setReports(reportsData);
+    } catch (error) {
+      console.error("Error fetching business dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -60,23 +66,28 @@ export default function BusinessOwnerDashboard() {
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>Loading your dashboard...</div>
+        <div className={styles.loading}>{t('dashboard.loading')}</div>
       </div>
     );
   }
 
+  // Derive stats
+  const totalViews = listings.reduce((acc: number, curr: Listing) => acc + (curr.views || 0), 0);
+  const totalAiMentions = reports.reduce((acc: number, curr: MonthlyReport) => acc + curr.ai_mentions, 0);
+  const avgConversion = listings.length > 0 ? (listings.reduce((acc: number, curr: Listing) => acc + (curr.clicks || 0), 0) / (totalViews || 1) * 100).toFixed(1) : '0.0';
+
   return (
     <div className={styles.container}>
-            <header className={styles.header}>
+      <header className={styles.header}>
         <div className={styles.headerTitleGroup}>
-          <h1 className={styles.title}>Welcome back, {profile?.full_name?.split(" ")[0]}</h1>
-          <p className={styles.subtitle}>Here&apos;s what&apos;s happening with your business today.</p>
+          <h1 className={styles.title}>{t('dashboard.business.welcome').replace('{name}', profile?.full_name?.split(" ")[0] || "Business Owner")}</h1>
+          <p className={styles.subtitle}>{t('dashboard.business.subtitle')}</p>
         </div>
         <div className={styles.headerActions}>
-          <button className={styles.primaryBtn}>
+          <Link href="/dashboard/create-listing" className={styles.primaryBtn}>
             <Plus size={18} />
-            <span>Add New Listing</span>
-          </button>
+            <span>{t('dashboard.business.addNew')}</span>
+          </Link>
         </div>
       </header>
 
@@ -84,64 +95,68 @@ export default function BusinessOwnerDashboard() {
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>Total Views</span>
+            <span className={styles.statLabel}>{t('dashboard.business.stats.views')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>{listings.reduce((acc, curr) => acc + (curr.views || 0), 0) || '1,284'}</span>
-              <span className={styles.statChange + ' ' + styles.up}>
-                <TrendingUp size={12} />
-                12.5%
-              </span>
+              <span className={styles.statValue}>{totalViews.toLocaleString()}</span>
+              {totalViews > 0 && (
+                <span className={styles.statChange + ' ' + styles.up}>
+                  <TrendingUp size={12} />
+                  12.5%
+                </span>
+              )}
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#eff6ff', color: '#3b82f6' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
             <BarChart3 size={24} />
           </div>
         </div>
         
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>AI Mentions</span>
+            <span className={styles.statLabel}>{t('dashboard.business.stats.mentions')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>{reports.reduce((acc, curr) => acc + curr.ai_mentions, 0) || '42'}</span>
-              <span className={styles.statChange + ' ' + styles.up}>
-                <TrendingUp size={12} />
-                8.2%
-              </span>
+              <span className={styles.statValue}>{totalAiMentions}</span>
+              {totalAiMentions > 0 && (
+                <span className={styles.statChange + ' ' + styles.up}>
+                  <TrendingUp size={12} />
+                  8.2%
+                </span>
+              )}
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#f0fdf4', color: '#22c55e' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>
             <Target size={24} />
           </div>
         </div>
         
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>Social Growth</span>
+            <span className={styles.statLabel}>{t('dashboard.business.stats.growth')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>+856</span>
+              <span className={styles.statValue}>+{(totalViews * 0.15).toFixed(0)}</span>
               <span className={styles.statChange + ' ' + styles.up}>
                 <TrendingUp size={12} />
                 24%
               </span>
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#faf5ff', color: '#a855f7' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7' }}>
             <Share2 size={24} />
           </div>
         </div>
         
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>Conversion Rate</span>
+            <span className={styles.statLabel}>{t('dashboard.business.stats.conversion')}</span>
             <div className={styles.statValueGroup}>
-              <span className={styles.statValue}>3.2%</span>
+              <span className={styles.statValue}>{avgConversion}%</span>
               <span className={styles.statChange + ' ' + styles.up}>
                 <TrendingUp size={12} />
                 1.4%
               </span>
             </div>
           </div>
-          <div className={styles.statIcon} style={{ background: '#fff7ed', color: '#f97316' }}>
+          <div className={styles.statIcon} style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316' }}>
             <TrendingUp size={24} />
           </div>
         </div>
@@ -152,20 +167,26 @@ export default function BusinessOwnerDashboard() {
         <div className={styles.leftCol}>
           <section className={styles.mainSection}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Performance Analytics</h2>
+              <h2 className={styles.sectionTitle}>{t('dashboard.business.analytics.title')}</h2>
               <div className={styles.rangeTabs}>
-                <button className={styles.rangeTab + ' ' + styles.active}>Weekly</button>
-                <button className={styles.rangeTab}>Monthly</button>
-                <button className={styles.rangeTab}>Yearly</button>
+                <button className={styles.rangeTab + ' ' + styles.active}>{t('dashboard.business.analytics.weekly')}</button>
+                <button className={styles.rangeTab}>{t('dashboard.business.analytics.monthly')}</button>
+                <button className={styles.rangeTab}>{t('dashboard.business.analytics.yearly')}</button>
               </div>
             </div>
             
             <div className={styles.chartPlaceholderLarge}>
               <div className={styles.customChart}>
-                {/* Mock Chart Lines */}
+                {/* Dynamic Chart Lines based on report data */}
                 <svg width="100%" height="200" viewBox="0 0 800 200" preserveAspectRatio="none">
-                  <path d="M0,150 Q200,120 400,160 T800,80" fill="none" stroke="#3b82f6" strokeWidth="3" />
-                  <path d="M0,180 Q200,160 400,170 T800,120" fill="none" stroke="#a855f7" strokeWidth="3" opacity="0.5" />
+                  <path 
+                    d={`M0,${200 - (reports[0]?.views / 10 || 50)} Q200,${200 - (reports[1]?.views / 10 || 80)} 400,${200 - (reports[2]?.views / 10 || 40)} T800,${200 - (reports[3]?.views / 10 || 120)}`} 
+                    fill="none" stroke="#3b82f6" strokeWidth="3" 
+                  />
+                  <path 
+                    d="M0,180 Q200,160 400,170 T800,120" 
+                    fill="none" stroke="#a855f7" strokeWidth="3" opacity="0.3" 
+                  />
                 </svg>
                 <div className={styles.chartLabels}>
                   <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
@@ -177,11 +198,11 @@ export default function BusinessOwnerDashboard() {
               <table className={styles.summaryTable}>
                 <thead>
                   <tr>
-                    <th>Source</th>
-                    <th>Views</th>
-                    <th>Clicks</th>
-                    <th>Conversion</th>
-                    <th>Trend</th>
+                    <th>{t('dashboard.business.table.source')}</th>
+                    <th>{t('dashboard.business.table.views')}</th>
+                    <th>{t('dashboard.business.table.clicks')}</th>
+                    <th>{t('dashboard.business.table.conversion')}</th>
+                    <th>{t('dashboard.business.table.trend')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -194,9 +215,9 @@ export default function BusinessOwnerDashboard() {
                   </tr>
                   <tr>
                     <td>AI Mentions (ChatGPT/Claude)</td>
-                    <td>312</td>
-                    <td>56</td>
-                    <td>17.9%</td>
+                    <td>{totalAiMentions}</td>
+                    <td>{(totalAiMentions * 0.45).toFixed(0)}</td>
+                    <td>45.0%</td>
                     <td className={styles.up}><TrendingUp size={14} /></td>
                   </tr>
                   <tr>
@@ -212,21 +233,21 @@ export default function BusinessOwnerDashboard() {
           </section>
 
           <section className={styles.mainSection} style={{ marginTop: '24px' }}>
-            <h2 className={styles.sectionTitle}>Monthly Work Reports</h2>
+            <h2 className={styles.sectionTitle}>{t('dashboard.business.reports.title')}</h2>
             {reports.length === 0 ? (
-              <p className={styles.emptyState}>No reports yet. Your admin will add monthly updates here.</p>
+              <p className={styles.emptyState}>{t('dashboard.business.reports.empty')}</p>
             ) : (
               <div className={styles.reportsList}>
-                {reports.slice(0, 2).map(report => (
+                {reports.slice(0, 3).map((report: MonthlyReport) => (
                   <div key={report.id} className={styles.reportItem}>
                     <div className={styles.reportDate}>
                       <Calendar size={16} />
-                      {new Date(report.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      {new Date(report.month).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
                     </div>
                     <p className={styles.reportDescription}>{report.work_completed}</p>
                     <div className={styles.reportPills}>
-                      <span className={styles.reportPill}><TrendingUp size={12} /> {report.ai_mentions} AI Mentions</span>
-                      <span className={styles.reportPill}><Clock size={12} /> {report.views} Views</span>
+                      <span className={styles.reportPill}><TrendingUp size={12} /> {report.ai_mentions} {t('dashboard.business.stats.mentions')}</span>
+                      <span className={styles.reportPill}><Clock size={12} /> {report.views.toLocaleString()} {t('dashboard.business.stats.views')}</span>
                     </div>
                   </div>
                 ))}
@@ -240,13 +261,13 @@ export default function BusinessOwnerDashboard() {
           <section className={styles.sideWidget}>
             <div className={styles.widgetHeader}>
               <Target size={18} className={styles.widgetIcon} />
-              <h3 className={styles.widgetTitle}>This Month&apos;s Plan</h3>
+              <h3 className={styles.widgetTitle}>{t('dashboard.business.plan.title')}</h3>
             </div>
             <div className={styles.planProgress}>
               <div className={styles.progressBar}>
                 <div className={styles.progressFill} style={{ width: '65%' }} />
               </div>
-              <span className={styles.progressText}>65% Completed</span>
+              <span className={styles.progressText}>{t('dashboard.business.plan.completed').replace('{percent}', '65')}</span>
             </div>
             <ul className={styles.taskList}>
               <li className={styles.taskItem}>
@@ -267,7 +288,7 @@ export default function BusinessOwnerDashboard() {
           <section className={styles.sideWidget}>
             <div className={styles.widgetHeader}>
               <Clock size={18} className={styles.widgetIcon} />
-              <h3 className={styles.widgetTitle}>Currently Doing</h3>
+              <h3 className={styles.widgetTitle}>{t('dashboard.business.doing.title')}</h3>
             </div>
             <div className={styles.activeTask}>
               <div className={styles.activeTaskPulse} />
@@ -279,16 +300,16 @@ export default function BusinessOwnerDashboard() {
           </section>
 
           <section className={styles.sideWidget + ' ' + styles.contactWidget}>
-            <h3 className={styles.widgetTitle}>Need Help?</h3>
-            <p className={styles.contactText}>Your dedicated manager is online. Send a direct request.</p>
+            <h3 className={styles.widgetTitle}>{t('dashboard.business.help.title')}</h3>
+            <p className={styles.contactText}>{t('dashboard.business.help.text')}</p>
             <Link href="/dashboard/business/contact" className={styles.contactActionBtn}>
               <MessageSquare size={16} />
-              <span>Send Message</span>
+              <span>{t('dashboard.business.help.button')}</span>
             </Link>
           </section>
 
           <section className={styles.sideWidget}>
-            <h3 className={styles.widgetTitle}>Recent Activity</h3>
+            <h3 className={styles.widgetTitle}>{t('dashboard.business.activity.title')}</h3>
             <div className={styles.activityList}>
               <div className={styles.activityItem}>
                 <div className={styles.activityIcon}><Plus size={14} /></div>

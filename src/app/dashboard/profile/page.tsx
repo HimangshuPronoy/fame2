@@ -1,36 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
-import { User, Mail, Calendar, Shield, Bell, Heart } from "lucide-react";
+import { User, Mail, Calendar, Shield, Bell, Heart, Save, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import styles from "./profile.module.css";
+import { useLanguage } from "@/lib/language-context";
 
-const categories = ["Fitness", "Dining", "Wellness", "Beauty", "Nightlife", "Travel"];
+const categoriesList = ["Fitness", "Dining", "Wellness", "Beauty", "Nightlife", "Travel"];
 
 export default function ProfilePage() {
   const { user, profile } = useAuth();
+  const { t } = useLanguage();
   const [fullName, setFullName] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
-  useEffect(() => {
-    if (profile) {
-      setFullName(profile.full_name || "");
-    }
-    if (user) {
-      fetchPreferences();
-    }
-  }, [profile, user]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const fetchPreferences = async () => {
+  const fetchPreferences = useCallback(async (userId: string) => {
     const { data } = await supabase
       .from("user_preferences")
       .select("*")
-      .eq("user_id", user!.id)
+      .eq("user_id", userId)
       .single();
 
     if (data) {
@@ -38,36 +32,52 @@ export default function ProfilePage() {
       setEmailNotifications(data.notification_email);
       setPushNotifications(data.notification_push);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name || "");
+    }
+    if (user) {
+      fetchPreferences(user.id);
+    }
+  }, [profile, user, fetchPreferences]);
 
   const handleSaveProfile = async () => {
+    if (!user) return;
     setSaving(true);
     setMessage("");
+    setIsError(false);
 
-    // Update profile
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .update({ full_name: fullName })
-      .eq("id", user!.id);
+    try {
+      // Update profile
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ full_name: fullName })
+        .eq("id", user.id);
 
-    // Upsert preferences
-    const { error: prefsError } = await supabase
-      .from("user_preferences")
-      .upsert({
-        user_id: user!.id,
-        favorite_categories: selectedCategories,
-        notification_email: emailNotifications,
-        notification_push: pushNotifications,
-      });
+      // Upsert preferences
+      const { error: prefsError } = await supabase
+        .from("user_preferences")
+        .upsert({
+          user_id: user.id,
+          favorite_categories: selectedCategories,
+          notification_email: emailNotifications,
+          notification_push: pushNotifications,
+        });
 
-    if (profileError || prefsError) {
-      setMessage("Error saving profile");
-    } else {
-      setMessage("Profile saved successfully!");
+      if (profileError || prefsError) {
+        throw new Error("Failed to save profile or preferences");
+      }
+      
+      setMessage(t('profile.saveSuccess') || "Profile saved successfully!");
       setTimeout(() => setMessage(""), 3000);
+    } catch {
+       setIsError(true);
+       setMessage(t('profile.saveError') || "Error saving profile");
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
   };
 
   const toggleCategory = (category: string) => {
@@ -80,32 +90,35 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
+      <header className={styles.header}>
         <h1 className={styles.title}>
           <User size={32} />
-          My Profile
+          {t('nav.profile')}
         </h1>
-        <p className={styles.subtitle}>Manage your account settings and preferences</p>
-      </div>
+        <p className={styles.subtitle}>{t('profile.subtitle')}</p>
+      </header>
 
       <div className={styles.content}>
         {/* Account Info */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Account Information</h2>
+          <h2 className={styles.sectionTitle}>
+            <Shield size={22} />
+            {t('profile.accountInfo')}
+          </h2>
           
           <div className={styles.infoGrid}>
             <div className={styles.infoItem}>
-              <Mail size={20} />
+              <Mail size={18} />
               <div>
-                <div className={styles.label}>Email</div>
+                <div className={styles.label}>{t('auth.email')}</div>
                 <div className={styles.value}>{user?.email}</div>
               </div>
             </div>
 
             <div className={styles.infoItem}>
-              <Calendar size={20} />
+              <Calendar size={18} />
               <div>
-                <div className={styles.label}>Member Since</div>
+                <div className={styles.label}>{t('profile.memberSince')}</div>
                 <div className={styles.value}>
                   {profile?.created_at && new Date(profile.created_at).toLocaleDateString()}
                 </div>
@@ -113,11 +126,11 @@ export default function ProfilePage() {
             </div>
 
             <div className={styles.infoItem}>
-              <Shield size={20} />
+              <Shield size={18} />
               <div>
-                <div className={styles.label}>Role</div>
+                <div className={styles.label}>{t('profile.role')}</div>
                 <div className={styles.value}>
-                  {profile?.role === "admin" ? "Administrator" : "Member"}
+                  {profile?.role === "admin" ? t('admin.title') : t('profile.member')}
                 </div>
               </div>
             </div>
@@ -126,33 +139,29 @@ export default function ProfilePage() {
 
         {/* Personal Details */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Personal Details</h2>
-          
+          <h2 className={styles.sectionTitle}>{t('profile.personalDetails')}</h2>
           <div className={styles.formGroup}>
-            <label htmlFor="fullName">Full Name</label>
+            <label htmlFor="fullName">{t('profile.fullName')}</label>
             <input
               id="fullName"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Enter your full name"
+              placeholder={t('profile.fullNamePlaceholder')}
               className={styles.input}
             />
           </div>
         </section>
 
-        {/* Preferences */}
+        {/* Favorites */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
-            <Heart size={24} />
-            Favorite Categories
+            <Heart size={22} />
+            {t('profile.interests')}
           </h2>
-          <p className={styles.sectionDesc}>
-            Select your interests to get personalized recommendations
-          </p>
-
+          <p className={styles.sectionDesc}>{t('profile.interestsDesc')}</p>
           <div className={styles.categoryGrid}>
-            {categories.map((category) => (
+            {categoriesList.map((category) => (
               <button
                 key={category}
                 onClick={() => toggleCategory(category)}
@@ -169,50 +178,46 @@ export default function ProfilePage() {
         {/* Notifications */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
-            <Bell size={24} />
-            Notifications
+            <Bell size={22} />
+            {t('profile.notifications')}
           </h2>
-
           <div className={styles.toggleGroup}>
             <label className={styles.toggleLabel}>
-              <input
-                type="checkbox"
-                checked={emailNotifications}
-                onChange={(e) => setEmailNotifications(e.target.checked)}
-                className={styles.checkbox}
-              />
-              <span>Email Notifications</span>
-              <p className={styles.toggleDesc}>
-                Receive updates about bookings and new listings
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={(e) => setEmailNotifications(e.target.checked)}
+                  className={styles.checkbox}
+                />
+                <span>{t('profile.emailNotif')}</span>
+              </div>
+              <p className={styles.toggleDesc}>{t('profile.emailNotifDesc')}</p>
             </label>
 
             <label className={styles.toggleLabel}>
-              <input
-                type="checkbox"
-                checked={pushNotifications}
-                onChange={(e) => setPushNotifications(e.target.checked)}
-                className={styles.checkbox}
-              />
-              <span>Push Notifications</span>
-              <p className={styles.toggleDesc}>
-                Get real-time alerts on your device
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <input
+                  type="checkbox"
+                  checked={pushNotifications}
+                  onChange={(e) => setPushNotifications(e.target.checked)}
+                  className={styles.checkbox}
+                />
+                <span>{t('profile.pushNotif')}</span>
+              </div>
+              <p className={styles.toggleDesc}>{t('profile.pushNotifDesc')}</p>
             </label>
           </div>
         </section>
 
-        {/* Save Button */}
         <div className={styles.actions}>
-          <button
-            onClick={handleSaveProfile}
-            disabled={saving}
-            className={styles.saveBtn}
-          >
-            {saving ? "Saving..." : "Save Changes"}
+          <button onClick={handleSaveProfile} disabled={saving} className={styles.saveBtn}>
+            {saving ? <Loader2 className="spin" size={18} /> : <Save size={18} />}
+            <span>{saving ? t('common.loading') : t('profile.saveChanges')}</span>
           </button>
           {message && (
-            <div className={message.includes("Error") ? styles.errorMsg : styles.successMsg}>
+            <div className={isError ? styles.errorMsg : styles.successMsg}>
+              {isError ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
               {message}
             </div>
           )}

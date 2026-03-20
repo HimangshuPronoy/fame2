@@ -1,15 +1,31 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useCallback } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
-import { LayoutDashboard, Settings, LogOut, ArrowLeft, User, List, PlusCircle, Bell, Search, MessageCircle } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  LogOut, 
+  ArrowLeft, 
+  User, 
+  List, 
+  PlusCircle, 
+  Bell, 
+  Search, 
+  MessageCircle,
+  ShieldAlert,
+  Heart,
+  Calendar
+} from "lucide-react";
 import styles from "./layout.module.css";
+import { useLanguage } from "@/lib/language-context";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, profile, loading, signOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -17,12 +33,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [user, loading, router]);
 
-  // Block rendering entirely if not authenticated
+  const handleSignOut = useCallback(async () => {
+    await signOut();
+    router.replace("/");
+  }, [signOut, router]);
+
+  // Block rendering entirely if loading
   if (loading) {
     return (
       <div className={styles.loadingScreen}>
         <div className={styles.loadingSpinner} />
-        <p>Loading your dashboard...</p>
+        <p>{t('dashboard.loading')}</p>
       </div>
     );
   }
@@ -30,78 +51,92 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!user) {
     return (
       <div className={styles.loadingScreen}>
-        <p>Redirecting to login...</p>
+        <p>{t('dashboard.redirecting')}</p>
       </div>
     );
   }
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace("/");
-  };
+  const isActive = (path: string) => pathname === path;
 
   return (
     <div className={styles.dashboardContainer}>
       <aside className={styles.sidebar}>
         <div className={styles.logoWrapper}>
           <Link href="/" className={styles.logo}>
-            Fame<span style={{ color: '#3b82f6' }}>.</span>
+            Fame<span style={{ color: '#d4af37' }}>.</span>
           </Link>
         </div>
 
         <nav className={styles.nav}>
           <div className={styles.navGroup}>
-            <span className={styles.navGroupTitle}>Main Menu</span>
+            <span className={styles.navGroupTitle}>{t('dashboard.nav.mainMenu')}</span>
             {profile?.role === "business_owner" ? (
               <>
-                <Link href="/dashboard/business" className={styles.navItem}>
+                <Link 
+                  href="/dashboard/business" 
+                  className={`${styles.navItem} ${isActive('/dashboard/business') ? styles.navItemActive : ''}`}
+                >
                   <LayoutDashboard size={18} />
-                  <span>Dashboard</span>
+                  <span>{t('dashboard.nav.overview')}</span>
                 </Link>
-                <Link href="/dashboard/my-listings" className={styles.navItem}>
+                <Link 
+                  href="/dashboard/my-listings" 
+                  className={`${styles.navItem} ${isActive('/dashboard/my-listings') ? styles.navItemActive : ''}`}
+                >
                   <List size={18} />
-                  <span>My Listings</span>
+                  <span>{t('dashboard.nav.myListings')}</span>
                 </Link>
-                <Link href="/dashboard/create-listing" className={styles.navItem}>
+                <Link 
+                  href="/dashboard/create-listing" 
+                  className={`${styles.navItem} ${isActive('/dashboard/create-listing') ? styles.navItemActive : ''}`}
+                >
                   <PlusCircle size={18} />
-                  <span>Create New</span>
+                  <span>{t('dashboard.nav.createNew')}</span>
                 </Link>
               </>
             ) : (
               <>
-                <Link href="/dashboard/user" className={styles.navItem}>
+                <Link 
+                  href="/dashboard/user" 
+                  className={`${styles.navItem} ${isActive('/dashboard/user') ? styles.navItemActive : ''}`}
+                >
                   <LayoutDashboard size={18} />
-                  <span>Overview</span>
+                  <span>{t('dashboard.nav.overview')}</span>
                 </Link>
-                <Link href="/dashboard/saved" className={styles.navItem}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                  <span>Saved Items</span>
+                <Link 
+                  href="/dashboard/saved" 
+                  className={`${styles.navItem} ${isActive('/dashboard/saved') ? styles.navItemActive : ''}`}
+                >
+                  <Heart size={18} />
+                  <span>{t('dashboard.nav.savedItems')}</span>
                 </Link>
-                <Link href="/dashboard/bookings" className={styles.navItem}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  <span>My Bookings</span>
+                <Link 
+                  href="/dashboard/bookings" 
+                  className={`${styles.navItem} ${isActive('/dashboard/bookings') ? styles.navItemActive : ''}`}
+                >
+                  <Calendar size={18} />
+                  <span>{t('dashboard.nav.myBookings')}</span>
                 </Link>
               </>
             )}
           </div>
 
           <div className={styles.navGroup}>
-            <span className={styles.navGroupTitle}>Account</span>
-            <Link href="/dashboard/profile" className={styles.navItem}>
+            <span className={styles.navGroupTitle}>{t('dashboard.nav.account')}</span>
+            <Link 
+              href="/dashboard/profile" 
+              className={`${styles.navItem} ${isActive('/dashboard/profile') ? styles.navItemActive : ''}`}
+            >
               <User size={18} />
-              <span>Settings</span>
+              <span>{t('dashboard.nav.settings')}</span>
             </Link>
             {profile?.role === "admin" && (
-              <Link href="/dashboard/admin" className={styles.navItem}>
-                <Settings size={18} />
-                <span>Admin Panel</span>
+              <Link 
+                href="/dashboard/admin" 
+                className={`${styles.navItem} ${isActive('/dashboard/admin') ? styles.navItemActive : ''}`}
+              >
+                <ShieldAlert size={18} />
+                <span>{t('dashboard.nav.adminPanel')}</span>
               </Link>
             )}
           </div>
@@ -110,11 +145,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className={styles.footerNav}>
           <Link href="/" className={styles.navItem}>
             <ArrowLeft size={18} />
-            <span>Back to Site</span>
+            <span>{t('dashboard.nav.backToSite')}</span>
           </Link>
           <button onClick={handleSignOut} className={`${styles.navItem} ${styles.logout}`}>
             <LogOut size={18} />
-            <span>Log Out</span>
+            <span>{t('dashboard.nav.logOut')}</span>
           </button>
         </div>
       </aside>
@@ -123,7 +158,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <header className={styles.topBar}>
           <div className={styles.searchWrapper}>
             <Search size={18} className={styles.searchIcon} />
-            <input type="text" placeholder="Search tasks, reports, listings..." className={styles.searchInput} />
+            <input 
+              type="text" 
+              placeholder={t('dashboard.search.placeholder')} 
+              className={styles.searchInput} 
+            />
           </div>
           
           <div className={styles.topBarActions}>
@@ -139,7 +178,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className={styles.userAvatarSmall}>
                 {profile?.full_name?.[0] ?? user.email?.[0]?.toUpperCase()}
               </div>
-              <span className={styles.userNameSmall}>{profile?.full_name ?? user.email?.split("@")[0]}</span>
+              <span className={styles.userNameSmall}>
+                {profile?.full_name ?? user.email?.split("@")[0]}
+              </span>
             </div>
           </div>
         </header>

@@ -7,6 +7,7 @@ import { ArrowLeft, AlertCircle } from "lucide-react";
 import styles from "./login.module.css";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +17,7 @@ export default function AuthPage() {
   const [form, setForm] = useState({ fullName: "", email: "", password: "" });
 
   const { signIn, signUp } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,23 +27,23 @@ export default function AuthPage() {
     setLoading(true);
 
     if (isLogin) {
-      const { error } = await signIn(form.email, form.password);
-      if (error) {
-        setError(error);
+      const { error: signInError } = await signIn(form.email, form.password);
+      if (signInError) {
+        setError(signInError);
       } else {
         router.push("/dashboard");
       }
     } else {
       if (!form.fullName.trim()) {
-        setError("Please enter your full name.");
+        setError(t('auth.error.fullName') || "Please enter your full name.");
         setLoading(false);
         return;
       }
-      const { error } = await signUp(form.email, form.password, form.fullName);
-      if (error) {
-        setError(error);
+      const { error: signUpError } = await signUp(form.email, form.password, form.fullName);
+      if (signUpError) {
+        setError(signUpError);
       } else {
-        setSuccess("Account created! Please check your email to confirm, then sign in.");
+        setSuccess(t('auth.success') || "Account created! Please check your email to confirm, then sign in.");
         setIsLogin(true);
         setForm({ fullName: "", email: form.email, password: "" });
       }
@@ -54,17 +56,17 @@ export default function AuthPage() {
       {/* Left Form Side */}
       <div className={styles.formSide}>
         <Link href="/" className={styles.backLink}>
-          <ArrowLeft size={16} /> Back to Home
+          <ArrowLeft size={16} /> {t('auth.backToHome')}
         </Link>
 
         <div className={styles.formContainer}>
           <div className={styles.header}>
             <h1 className={styles.logo}>Fame<span style={{color: 'var(--accent)'}}>.</span></h1>
-            <h2 className={styles.title}>{isLogin ? "Welcome Back" : "Create an Account"}</h2>
+            <h2 className={styles.title}>{isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}</h2>
             <p className={styles.subtitle}>
               {isLogin
-                ? "Enter your details to access your Fame dashboard."
-                : "Join the most exclusive lifestyle directory today."}
+                ? t('auth.loginSubtitle')
+                : t('auth.signupSubtitle')}
             </p>
           </div>
 
@@ -84,7 +86,7 @@ export default function AuthPage() {
           <form className={styles.form} onSubmit={handleSubmit}>
             {!isLogin && (
               <div className={styles.formGroup}>
-                <label>Full Name</label>
+                <label>{t('auth.fullName')}</label>
                 <input
                   type="text"
                   placeholder="John Doe"
@@ -97,7 +99,7 @@ export default function AuthPage() {
             )}
 
             <div className={styles.formGroup}>
-              <label>Email Address</label>
+              <label>{t('auth.email')}</label>
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -110,8 +112,8 @@ export default function AuthPage() {
 
             <div className={styles.formGroup}>
               <div className={styles.passwordHeader}>
-                <label>Password</label>
-                {isLogin && <a href="#" className={styles.forgot}>Forgot?</a>}
+                <label>{t('auth.password')}</label>
+                {isLogin && <a href="#" className={styles.forgot}>{t('auth.forgotPassword')}</a>}
               </div>
               <input
                 type="password"
@@ -127,7 +129,7 @@ export default function AuthPage() {
             <div className={styles.checkboxGroup}>
               <label className={styles.checkboxLabel}>
                 <input type="checkbox" required className={styles.checkbox} />
-                <span>I accept the <a href="#" className={styles.link}>Terms of Service</a> and <a href="#" className={styles.link}>Privacy Policy</a>.</span>
+                <span>{t('auth.acceptTerms')}</span>
               </label>
             </div>
 
@@ -135,19 +137,18 @@ export default function AuthPage() {
               type="submit"
               className={styles.submitBtn}
               disabled={loading}
-              style={{ opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
             >
-              {loading ? "Please wait..." : isLogin ? "Sign In" : "Sign Up"}
+              {loading ? t('auth.pleaseWait') : isLogin ? t('auth.signIn') : t('auth.signUp')}
             </button>
           </form>
 
           <p className={styles.toggleText}>
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}
             <button
               onClick={() => { setIsLogin(!isLogin); setError(null); setSuccess(null); }}
               className={styles.toggleBtn}
             >
-              {isLogin ? "Sign Up" : "Log In"}
+              {isLogin ? t('auth.signUp') : t('auth.login')}
             </button>
           </p>
         </div>
@@ -157,7 +158,7 @@ export default function AuthPage() {
       <div className={styles.imageSide}>
         <div className={styles.imageOverlay}>
           <div className={styles.quote}>
-            &quot;Fame has completely transformed how I discover the city&apos;s hidden gems.&quot;
+            &quot;{isLogin ? "Fame has completely transformed how I discover the city's hidden gems." : "Join the most exclusive lifestyle directory in the city."}&quot;
             <span className={styles.author}>— Elite Member</span>
           </div>
         </div>
