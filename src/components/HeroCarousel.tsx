@@ -70,9 +70,8 @@ export default function HeroCarousel() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-          >
-            {t('home.hero.title')}
-          </motion.h1>
+            dangerouslySetInnerHTML={{ __html: t('home.hero.title') }}
+          />
           
           <motion.p 
             className={styles.description}

@@ -59,7 +59,7 @@ export default function Header() {
           ) : (
             <>
               <Link href="/login" className={styles.loginLink}>{t('nav.login')}</Link>
-              <Link href="/login" className={styles.joinButton}>{t('nav.login')}</Link>
+              <Link href="/login" className={styles.joinButton}>{t('nav.join')}</Link>
             </>
           )}
         </div>
@@ -90,7 +90,7 @@ export default function Header() {
             ) : (
               <>
                 <Link href="/login" className={styles.mobileLoginLink} onClick={() => setMobileMenuOpen(false)}>{t('nav.login')}</Link>
-                <Link href="/login" className={styles.mobileJoinButton} onClick={() => setMobileMenuOpen(false)}>{t('nav.login')}</Link>
+                <Link href="/login" className={styles.mobileJoinButton} onClick={() => setMobileMenuOpen(false)}>{t('nav.join')}</Link>
               </>
             )}
           </div>

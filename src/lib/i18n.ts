@@ -8,12 +8,13 @@ export const translations = {
     'nav.listings': 'Browse',
     'nav.dashboard': 'Dashboard',
     'nav.login': 'Login',
+    'nav.join': 'Join',
     'nav.logout': 'Logout',
     'nav.profile': 'Profile',
     
     // Homepage
-    'home.hero.title': 'Discover Mongolia\'s Best',
-    'home.hero.subtitle': 'Find top-rated gyms, restaurants, spas, and more',
+    'home.hero.title': 'Find the Best <br /><span class="italic">Businesses.</span>',
+    'home.hero.subtitle': 'Discover Mongolia\'s top-rated restaurants, gyms, spas, and nightlife. Curated recommendations powered by AI, trusted by locals.',
     'home.hero.aiPowered': 'AI-POWERED DISCOVERY',
     'home.hero.findBest': 'Find the Best',
     'home.hero.businesses': 'Businesses.',
@@ -154,12 +155,13 @@ export const translations = {
     'nav.listings': 'Жагсаалт',
     'nav.dashboard': 'Хяналтын самбар',
     'nav.login': 'Нэвтрэх',
+    'nav.join': 'Бүртгүүлэх',
     'nav.logout': 'Гарах',
     'nav.profile': 'Профайл',
     
     // Homepage
-    'home.hero.title': 'Монголын шилдгийг олоорой',
-    'home.hero.subtitle': 'Шилдэг спорт зал, ресторан, спа болон бусад газруудыг олоорой',
+    'home.hero.title': 'Шилдгийг <br /><span class="italic">Олоорой.</span>',
+    'home.hero.subtitle': 'Монголын шилдэг ресторан, спорт зал, спа болон шөнийн амьдралыг олоорой. AI-аар хангагдсан зөвлөмж, орон нутгийнхан итгэдэг.',
     'home.hero.aiPowered': 'AI-ААР ХАНГАГДСАН ОЛДОЦ',
     'home.hero.findBest': 'Шилдгийг олоорой',
     'home.hero.businesses': 'Бизнесүүд.',
