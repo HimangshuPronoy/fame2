@@ -1,0 +1,96 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.info {
+  background: #f3f4f6;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.info p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.buttons button {
+  padding: 12px 24px;
+  border: 2px solid #111827;
+  background: white;
+  color: #111827;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buttons button:hover {
+  background: #f3f4f6;
+}
+
+.buttons button.active {
+  background: #111827;
+  color: white;
+}
+
+.translations {
+  margin: 40px 0;
+}
+
+.translations table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.translations th,
+.translations td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #e5e7eb;
+}
+
+.translations th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.translations tr:hover {
+  background: #f9fafb;
+}
+
+.expected {
+  background: #fef3c7;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 40px 0;
+}
+
+.expected h2 {
+  margin-top: 0;
+}
+
+.expected h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.expected ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.expected li {
+  margin: 6px 0;
+  font-family: monospace;
+  font-size: 14px;
+}
