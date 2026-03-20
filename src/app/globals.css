@@ -3,27 +3,27 @@
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-serif: 'Noto Serif', Georgia, serif;
-  --bg: #030712; /* Deep Slate/Black */
-  --bg-secondary: #0f172a; /* Slate 900 */
-  --text-main: #f8fafc; /* Slate 50 */
-  --text-muted: #94a3b8; /* Slate 400 */
-  --text-light: #64748b; /* Slate 500 */
+  --bg: #f8fafc; /* Slate 50 */
+  --bg-secondary: #ffffff;
+  --text-main: #0f172a; /* Slate 900 */
+  --text-muted: #64748b; /* Slate 500 */
+  --text-light: #94a3b8; /* Slate 400 */
   --accent: #d4af37; /* Gold */
   --accent-green: #10b981; /* Emerald 500 */
-  --border: rgba(255, 255, 255, 0.08);
-  --card-bg: #111827; /* Gray 900 */
+  --border: rgba(0, 0, 0, 0.08);
+  --card-bg: #ffffff;
 }
 
 /* Ensure consistent experience regardless of system setting */
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #030712;
-    --bg-secondary: #0f172a;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --text-light: #64748b;
-    --border: rgba(255, 255, 255, 0.08);
-    --card-bg: #111827;
+    --bg: #f8fafc;
+    --bg-secondary: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    --border: rgba(0, 0, 0, 0.08);
+    --card-bg: #ffffff;
   }
 }
 

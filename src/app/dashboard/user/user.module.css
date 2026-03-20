@@ -69,8 +69,8 @@
 }
 
 .statCard:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .statLabel {
@@ -155,7 +155,7 @@
 
 .recItem {
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.01);
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.2s;
@@ -164,9 +164,9 @@
 
 .recItem:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
 .recImgWrapper {
@@ -181,7 +181,7 @@
 .imgPlaceholder {
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .recInfo {
@@ -280,8 +280,8 @@
 }
 
 .aiWidget {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(59, 130, 246, 0.05));
+  border: 1px solid rgba(139, 92, 246, 0.1);
 }
 
 .aiIcon {
@@ -296,7 +296,7 @@
 }
 
 .aiActionBtn {
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
   border: 1px solid var(--border);
   padding: 8px 16px;
   border-radius: 10px;
@@ -304,6 +304,7 @@
   font-weight: 600;
   color: var(--text-main);
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .quickLinks {
@@ -326,7 +327,7 @@
 }
 
 .quickLink:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.02);
   color: var(--text-main);
 }
 
@@ -386,13 +387,14 @@
 .supportBtn {
   width: 100%;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-main);
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 640px) {
