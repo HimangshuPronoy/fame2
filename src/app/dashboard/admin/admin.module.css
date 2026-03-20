@@ -35,8 +35,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
-  color: #000;
+  background: var(--accent);
+  color: #fff;
   border: none;
   padding: 10px 20px;
   border-radius: 10px;
@@ -48,7 +48,7 @@
 
 .addBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .dangerBtn {
@@ -94,6 +94,39 @@
   font-weight: 700;
   color: var(--text-main);
   margin-bottom: 20px;
+}
+
+/* Analytics Section */
+.analyticsSection {
+  margin-top: 24px;
+}
+
+.chartCardAdmin {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.chartHeader {
+  margin-bottom: 32px;
+}
+
+.chartTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.chartSubtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.chartWrapperAdmin {
+  margin-top: 32px;
 }
 
 /* Form */

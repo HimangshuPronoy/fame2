@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/language-context";
 import { supabase, Listing, MonthlyReport } from "@/lib/supabase";
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Legend
+} from 'recharts';
 import { BarChart3, MessageSquare, TrendingUp, Calendar, CheckCircle2, Target, Share2, Clock, Plus } from "lucide-react";
 import styles from "./business.module.css";
 import Link from "next/link";
@@ -46,6 +50,21 @@ export default function BusinessOwnerDashboard() {
       setLoading(false);
     }
   }, [user]);
+
+  // Map reports to chart data
+  const chartData = reports.length > 0 
+    ? [...reports].reverse().map(r => ({
+        name: r.month.split('-')[1] + '/' + r.month.split('-')[0].slice(2),
+        views: r.views,
+        clicks: r.clicks,
+        mentions: r.ai_mentions
+      }))
+    : [
+        { name: 'Jan', views: 400, clicks: 240, mentions: 12 },
+        { name: 'Feb', views: 300, clicks: 139, mentions: 22 },
+        { name: 'Mar', views: 200, clicks: 980, mentions: 15 },
+        { name: 'Apr', views: 278, clicks: 390, mentions: 28 },
+      ];
 
   useEffect(() => {
     if (user && profile?.role === 'business_owner') {
@@ -178,23 +197,92 @@ export default function BusinessOwnerDashboard() {
               </div>
             </div>
             
-            <div className={styles.chartPlaceholderLarge}>
-              <div className={styles.customChart}>
-                {/* Dynamic Chart Lines based on report data */}
-                <svg width="100%" height="200" viewBox="0 0 800 200" preserveAspectRatio="none">
-                  <path 
-                    d={`M0,${200 - (reports[0]?.views / 10 || 50)} Q200,${200 - (reports[1]?.views / 10 || 80)} 400,${200 - (reports[2]?.views / 10 || 40)} T800,${200 - (reports[3]?.views / 10 || 120)}`} 
-                    fill="none" stroke="#3b82f6" strokeWidth="3" 
+            <div className={styles.chartContainer}>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={chartData}>
+                  <defs>
+                    <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="var(--accent)" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }}
                   />
-                  <path 
-                    d="M0,180 Q200,160 400,170 T800,120" 
-                    fill="none" stroke="#a855f7" strokeWidth="3" opacity="0.3" 
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }}
                   />
-                </svg>
-                <div className={styles.chartLabels}>
-                  <span>{t('admin.table.month')} 1</span><span>{t('admin.table.month')} 2</span><span>{t('admin.table.month')} 3</span><span>{t('admin.table.month')} 4</span><span>{t('admin.table.month')} 5</span><span>{t('admin.table.month')} 6</span>
-                </div>
-              </div>
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: '12px', 
+                      border: 'none', 
+                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                      fontSize: '12px'
+                    }} 
+                  />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="views" 
+                    stroke="var(--accent)" 
+                    fillOpacity={1} 
+                    fill="url(#colorViews)" 
+                    strokeWidth={3}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="clicks" 
+                    stroke="#a855f7" 
+                    fillOpacity={1} 
+                    fill="url(#colorClicks)" 
+                    strokeWidth={3}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className={styles.sectionHeader} style={{ marginTop: '32px' }}>
+              <h2 className={styles.sectionTitle}>AI Mentions & Social Growth</h2>
+            </div>
+            
+            <div className={styles.chartContainer} style={{ height: '250px', marginBottom: '32px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }}
+                  />
+                  <Tooltip 
+                    cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
+                    contentStyle={{ 
+                      borderRadius: '12px', 
+                      border: 'none', 
+                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                      fontSize: '12px'
+                    }} 
+                  />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                  <Bar dataKey="mentions" name="AI Mentions" fill="var(--accent)" radius={[4, 4, 0, 0]} barSize={40} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
             <div className={styles.summaryTableWrapper}>

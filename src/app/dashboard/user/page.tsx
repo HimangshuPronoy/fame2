@@ -8,6 +8,10 @@ import styles from "./user.module.css";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/language-context";
 import { supabase, Listing } from "@/lib/supabase";
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend
+} from 'recharts';
 
 interface Activity {
   id: string;
@@ -26,6 +30,21 @@ export default function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [recentListings, setRecentListings] = useState<Listing[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
+
+  // Chart Data (Mocking trends for now)
+  const pointsHistory = [
+    { name: 'Jan', points: famePoints * 0.4 },
+    { name: 'Feb', points: famePoints * 0.6 },
+    { name: 'Mar', points: famePoints * 0.8 },
+    { name: 'Apr', points: famePoints }
+  ];
+
+  const categoryInterest = [
+    { name: t('category.fitness'), value: 400, color: '#3b82f6' },
+    { name: t('category.restaurants'), value: 300, color: '#10b981' },
+    { name: t('category.spa'), value: 200, color: '#f43f5e' },
+    { name: t('category.nightlife'), value: 100, color: '#eab308' },
+  ];
 
   useEffect(() => {
     async function fetchData() {
@@ -182,6 +201,83 @@ export default function UserDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Analytics Section */}
+      <section className={styles.analyticsSection}>
+        <div className={styles.chartCard}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Points Growth</h2>
+          </div>
+          <div className={styles.chartWrapper}>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={pointsHistory}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 12, fill: '#64748b' }}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 12, fill: '#64748b' }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '12px', 
+                    border: 'none', 
+                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                    fontSize: '12px'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="points" 
+                  stroke="var(--accent)" 
+                  strokeWidth={3} 
+                  dot={{ r: 4, fill: 'var(--accent)', strokeWidth: 2, stroke: '#fff' }}
+                  activeDot={{ r: 6, strokeWidth: 0 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className={styles.chartCard}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Interests</h2>
+          </div>
+          <div className={styles.chartWrapper}>
+            <ResponsiveContainer width="100%" height={240}>
+              <PieChart>
+                <Pie
+                  data={categoryInterest}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {categoryInterest.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '12px', 
+                    border: 'none', 
+                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                    fontSize: '12px'
+                  }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
 
       <div className={styles.dashboardGrid}>
         {/* Main Content */}

@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { PlusCircle, Edit2, Trash2, X, Loader2, Users, FileText, Layout, Save } from "lucide-react";
+import { PlusCircle, Edit2, Trash2, X, Loader2, Users, FileText, Layout, Save, BarChart2 } from "lucide-react";
+import { 
+  ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, 
+  Tooltip, Legend
+} from 'recharts';
 import styles from "./admin.module.css";
 import { supabase, Listing, Profile } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-context";
@@ -74,7 +78,7 @@ export default function AdminDashboard() {
   const { user, profile } = useAuth();
   const { t } = useLanguage();
   
-  const [activeTab, setActiveTab] = useState<'listings' | 'users' | 'reports'>('listings');
+  const [activeTab, setActiveTab] = useState<'listings' | 'users' | 'reports' | 'analytics'>('listings');
   const [listings, setListings] = useState<Listing[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [reports, setReports] = useState<JoinedReport[]>([]);
@@ -116,6 +120,16 @@ export default function AdminDashboard() {
     await Promise.all([fetchListings(), fetchProfiles(), fetchReports()]);
     setDbLoading(false);
   }, [fetchListings, fetchProfiles, fetchReports]);
+
+  // Platform Growth Data (Mocked for professional look)
+  const platformGrowthData = [
+    { name: 'Week 1', users: 12, listings: 4 },
+    { name: 'Week 2', users: 19, listings: 8 },
+    { name: 'Week 3', users: 32, listings: 15 },
+    { name: 'Week 4', users: 45, listings: 22 },
+    { name: 'Week 5', users: 58, listings: 28 },
+    { name: 'Week 6', users: 72, listings: 35 },
+  ];
 
   useEffect(() => {
     if (user && profile?.role === 'admin') {
@@ -261,9 +275,53 @@ export default function AdminDashboard() {
           <span>{t('admin.tabs.reports')}</span>
           <span className={styles.badge}>{reports.length}</span>
         </button>
+        <button className={`${styles.tab} ${activeTab === 'analytics' ? styles.activeTab : ''}`} onClick={() => setActiveTab('analytics')}>
+          <BarChart2 size={18} className={styles.tabIcon} />
+          <span>Analytics</span>
+        </button>
       </div>
 
       <div className={styles.content}>
+        {activeTab === 'analytics' && (
+          <div className={styles.analyticsSection}>
+            <div className={styles.chartCardAdmin}>
+              <div className={styles.chartHeader}>
+                <h3 className={styles.chartTitle}>Platform Growth</h3>
+                <p className={styles.chartSubtitle}>New Users vs New Listings (Last 6 Weeks)</p>
+              </div>
+              <div className={styles.chartWrapperAdmin}>
+                <ResponsiveContainer width="100%" height={350}>
+                  <ComposedChart data={platformGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                    <XAxis 
+                      dataKey="name" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        borderRadius: '12px', 
+                        border: 'none', 
+                        boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                        fontSize: '12px'
+                      }} 
+                    />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                    <Bar dataKey="listings" name="New Listings" fill="#a855f7" radius={[4, 4, 0, 0]} barSize={20} />
+                    <Line type="monotone" dataKey="users" name="New Users" stroke="var(--accent)" strokeWidth={3} dot={{ r: 4, fill: 'var(--accent)', strokeWidth: 2, stroke: '#fff' }} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'listings' && (
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>{t('admin.tabs.listings')}</h2>
