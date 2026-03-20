@@ -20,13 +20,14 @@ export interface Profile {
   id: string
   full_name: string | null
   avatar_url: string | null
-  role: 'user' | 'admin'
+  role: 'user' | 'admin' | 'business_owner'
   created_at: string
 }
 
 export interface Listing {
   id: string
   user_id: string | null
+  business_owner_id: string | null
   title: string
   subtitle: string | null
   description: string | null
@@ -139,6 +140,48 @@ export interface ConciergeRequest {
   details: string
   status: 'pending' | 'in_progress' | 'completed' | 'cancelled'
   admin_response: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface MonthlyReport {
+  id: string
+  business_owner_id: string
+  listing_id: string
+  month: string
+  work_completed: string
+  ai_mentions: number
+  views: number
+  clicks: number
+  ranking_improvement: string | null
+  notes: string | null
+  created_by: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ContactRequest {
+  id: string
+  business_owner_id: string
+  listing_id: string | null
+  subject: string
+  message: string
+  status: 'pending' | 'in_progress' | 'resolved'
+  admin_response: string | null
+  responded_by: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ProgressChart {
+  id: string
+  business_owner_id: string
+  listing_id: string
+  chart_type: 'views' | 'clicks' | 'ai_mentions' | 'ranking' | 'custom'
+  title: string
+  data: Array<{ date: string; value: number }>
+  description: string | null
+  created_by: string | null
   created_at: string
   updated_at: string
 }
