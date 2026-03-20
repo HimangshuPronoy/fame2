@@ -30,15 +30,29 @@ export interface Listing {
   title: string
   subtitle: string | null
   description: string | null
+  bio: string | null
   category: string
   location: string | null
+  address: string | null
+  city: string | null
+  country: string | null
+  latitude: number | null
+  longitude: number | null
   phone: string | null
+  email: string | null
   website: string | null
+  booking_url: string | null
+  menu_url: string | null
+  video_url: string | null
   price: string | null
   rating: number
   reviews: number
   image_url: string | null
   author_avatar: string | null
+  hours: Record<string, { open: string; close: string; closed: boolean }> | null
+  amenities: string[] | null
+  tags: string[] | null
+  social_links: Record<string, string> | null
   is_featured: boolean
   is_active: boolean
   created_at: string

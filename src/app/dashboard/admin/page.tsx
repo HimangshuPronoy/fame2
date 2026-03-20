@@ -12,12 +12,36 @@ const emptyForm = {
   title: "",
   subtitle: "",
   description: "",
+  bio: "",
   category: "Fitness",
   location: "",
+  address: "",
+  city: "",
+  country: "Mongolia",
   phone: "",
+  email: "",
   website: "",
+  booking_url: "",
+  menu_url: "",
+  video_url: "",
   price: "",
   image_url: "",
+  gallery_images: [] as string[],
+  hours: {
+    monday: { open: "09:00", close: "18:00", closed: false },
+    tuesday: { open: "09:00", close: "18:00", closed: false },
+    wednesday: { open: "09:00", close: "18:00", closed: false },
+    thursday: { open: "09:00", close: "18:00", closed: false },
+    friday: { open: "09:00", close: "18:00", closed: false },
+    saturday: { open: "10:00", close: "16:00", closed: false },
+    sunday: { open: "", close: "", closed: true },
+  },
+  amenities: [] as string[],
+  tags: [] as string[],
+  social_facebook: "",
+  social_instagram: "",
+  social_twitter: "",
+  social_linkedin: "",
   is_featured: false,
 };
 
@@ -62,12 +86,28 @@ export default function AdminDashboard() {
       title: listing.title,
       subtitle: listing.subtitle ?? "",
       description: listing.description ?? "",
+      bio: listing.bio ?? "",
       category: listing.category,
       location: listing.location ?? "",
+      address: listing.address ?? "",
+      city: listing.city ?? "",
+      country: listing.country ?? "Mongolia",
       phone: listing.phone ?? "",
+      email: listing.email ?? "",
       website: listing.website ?? "",
+      booking_url: listing.booking_url ?? "",
+      menu_url: listing.menu_url ?? "",
+      video_url: listing.video_url ?? "",
       price: listing.price ?? "",
       image_url: listing.image_url ?? "",
+      gallery_images: [],
+      hours: listing.hours as typeof emptyForm.hours ?? emptyForm.hours,
+      amenities: listing.amenities ?? [],
+      tags: listing.tags ?? [],
+      social_facebook: listing.social_links?.facebook ?? "",
+      social_instagram: listing.social_links?.instagram ?? "",
+      social_twitter: listing.social_links?.twitter ?? "",
+      social_linkedin: listing.social_links?.linkedin ?? "",
       is_featured: listing.is_featured,
     });
     setShowForm(true);
@@ -78,16 +118,34 @@ export default function AdminDashboard() {
     if (!form.title.trim()) return;
     setSaving(true);
 
+    const social_links: Record<string, string> = {};
+    if (form.social_facebook) social_links.facebook = form.social_facebook;
+    if (form.social_instagram) social_links.instagram = form.social_instagram;
+    if (form.social_twitter) social_links.twitter = form.social_twitter;
+    if (form.social_linkedin) social_links.linkedin = form.social_linkedin;
+
     const payload = {
       title: form.title.trim(),
       subtitle: form.subtitle.trim() || null,
       description: form.description.trim() || null,
+      bio: form.bio.trim() || null,
       category: form.category,
       location: form.location.trim() || null,
+      address: form.address.trim() || null,
+      city: form.city.trim() || null,
+      country: form.country.trim() || null,
       phone: form.phone.trim() || null,
+      email: form.email.trim() || null,
       website: form.website.trim() || null,
+      booking_url: form.booking_url.trim() || null,
+      menu_url: form.menu_url.trim() || null,
+      video_url: form.video_url.trim() || null,
       price: form.price.trim() || null,
       image_url: form.image_url.trim() || null,
+      hours: form.hours,
+      amenities: form.amenities.length > 0 ? form.amenities : null,
+      tags: form.tags.length > 0 ? form.tags : null,
+      social_links: Object.keys(social_links).length > 0 ? social_links : null,
       is_featured: form.is_featured,
       is_active: true,
     };
@@ -95,7 +153,17 @@ export default function AdminDashboard() {
     if (editingId) {
       await supabase.from("listings").update(payload).eq("id", editingId);
     } else {
-      await supabase.from("listings").insert([payload]);
+      const { data: newListing } = await supabase.from("listings").insert([payload]).select().single();
+      
+      // Add gallery images if any
+      if (newListing && form.gallery_images.length > 0) {
+        const imageRecords = form.gallery_images.map((url, index) => ({
+          listing_id: newListing.id,
+          image_url: url,
+          display_order: index,
+        }));
+        await supabase.from("listing_images").insert(imageRecords);
+      }
     }
 
     setSaveSuccess(true);
