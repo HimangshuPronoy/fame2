@@ -14,9 +14,18 @@ export const translations = {
     // Homepage
     'home.hero.title': 'Discover Mongolia\'s Best',
     'home.hero.subtitle': 'Find top-rated gyms, restaurants, spas, and more',
+    'home.hero.aiPowered': 'AI-POWERED DISCOVERY',
+    'home.hero.findBest': 'Find the Best',
+    'home.hero.businesses': 'Businesses.',
+    'home.hero.description': 'Discover Mongolia\'s top-rated restaurants, gyms, spas, and nightlife. Curated recommendations powered by AI, trusted by locals.',
     'home.search.placeholder': 'Search for businesses...',
+    'home.search.exploreNow': 'EXPLORE NOW',
     'home.featured': 'Featured Listings',
     'home.categories': 'Browse by Category',
+    'home.categories.discover': 'DISCOVER CATEGORIES',
+    'home.categories.title': 'Searching is more easy by category',
+    'home.categories.description': 'Explore our meticulously curated categories to find exactly what you\'re looking for. From world-class dining to elite fitness centers, discover the best your city has to offer.',
+    'home.categories.places': 'Places',
     
     // Listings
     'listings.title': 'All Listings',
@@ -58,11 +67,13 @@ export const translations = {
     'category.fitness': 'Fitness',
     'category.gym': 'Gym',
     'category.restaurants': 'Restaurants',
+    'category.restaurant': 'Restaurant',
     'category.nightlife': 'Nightlife',
     'category.spa': 'Spa',
     'category.beauty': 'Beauty',
     'category.wellness': 'Wellness',
     'category.hotels': 'Hotels',
+    'category.shopping': 'Shopping',
     
     // Dashboard
     'dashboard.title': 'Dashboard',
@@ -149,9 +160,18 @@ export const translations = {
     // Homepage
     'home.hero.title': 'Монголын шилдгийг олоорой',
     'home.hero.subtitle': 'Шилдэг спорт зал, ресторан, спа болон бусад газруудыг олоорой',
+    'home.hero.aiPowered': 'AI-ААР ХАНГАГДСАН ОЛДОЦ',
+    'home.hero.findBest': 'Шилдгийг олоорой',
+    'home.hero.businesses': 'Бизнесүүд.',
+    'home.hero.description': 'Монголын шилдэг ресторан, спорт зал, спа болон шөнийн амьдралыг олоорой. AI-аар хангагдсан зөвлөмж, орон нутгийнхан итгэдэг.',
     'home.search.placeholder': 'Бизнес хайх...',
+    'home.search.exploreNow': 'ОДОО СУДЛАХ',
     'home.featured': 'Онцлох жагсаалт',
     'home.categories': 'Ангиллаар үзэх',
+    'home.categories.discover': 'АНГИЛЛУУДЫГ ОЛООРОЙ',
+    'home.categories.title': 'Ангиллаар хайх нь илүү хялбар',
+    'home.categories.description': 'Та хайж байгаа зүйлээ яг олохын тулд бидний нарийн ангилсан ангиллуудыг судлаарай. Дэлхийн түвшний хоолны газраас эхлээд элит фитнесс төвүүд хүртэл, хотынхоо шилдгийг олоорой.',
+    'home.categories.places': 'Газар',
     
     // Listings
     'listings.title': 'Бүх жагсаалт',
@@ -193,11 +213,13 @@ export const translations = {
     'category.fitness': 'Фитнесс',
     'category.gym': 'Спорт зал',
     'category.restaurants': 'Ресторан',
+    'category.restaurant': 'Ресторан',
     'category.nightlife': 'Шөнийн амьдрал',
     'category.spa': 'Спа',
     'category.beauty': 'Гоо сайхан',
     'category.wellness': 'Эрүүл мэнд',
     'category.hotels': 'Зочид буудал',
+    'category.shopping': 'Дэлгүүр',
     
     // Dashboard
     'dashboard.title': 'Хяналтын самбар',

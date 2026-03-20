@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
 import styles from "./HeroCarousel.module.css";
+import { useLanguage } from "@/lib/language-context";
 
 const backgrounds = [
   {
@@ -21,6 +22,7 @@ const backgrounds = [
 
 export default function HeroCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,7 +62,7 @@ export default function HeroCarousel() {
             transition={{ delay: 0.2, duration: 0.8 }}
           >
             <div className={styles.line}></div>
-            <span className={styles.subtitleTag}>AI-POWERED DISCOVERY</span>
+            <span className={styles.subtitleTag}>{t('home.hero.aiPowered')}</span>
           </motion.div>
 
           <motion.h1 
@@ -69,8 +71,7 @@ export default function HeroCarousel() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            Find the Best <br />
-            <span className={styles.italicText}>Businesses.</span>
+            {t('home.hero.title')}
           </motion.h1>
           
           <motion.p 
@@ -79,8 +80,7 @@ export default function HeroCarousel() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            Discover Mongolia&apos;s top-rated restaurants, gyms, spas, and nightlife.
-            Curated recommendations powered by AI, trusted by locals.
+            {t('home.hero.subtitle')}
           </motion.p>
         </div>
 

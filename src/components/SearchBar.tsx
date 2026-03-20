@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./SearchBar.module.css";
+import { useLanguage } from "@/lib/language-context";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -24,7 +26,7 @@ export default function SearchBar() {
     <div className={styles.searchBar}>
       <input
         type="text"
-        placeholder="Search gyms, restaurants, spas..."
+        placeholder={t('home.search.placeholder')}
         className={styles.input}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -32,7 +34,7 @@ export default function SearchBar() {
       />
       <div className={styles.buttonWrapper}>
         <button onClick={handleSearch} className={styles.searchButton}>
-          EXPLORE NOW
+          {t('home.search.exploreNow')}
         </button>
       </div>
     </div>

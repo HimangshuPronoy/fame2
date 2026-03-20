@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Utensils, GlassWater, Dumbbell, ShoppingBag, Plane, Sparkles } from "lucide-react";
 import styles from "./Categories.module.css";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/lib/language-context";
 
 interface CategoryData {
   title: string;
@@ -25,6 +26,7 @@ const categoryConfig: CategoryData[] = [
 
 export default function Categories() {
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const { t } = useLanguage();
 
   useEffect(() => {
     async function fetchCounts() {
@@ -48,11 +50,11 @@ export default function Categories() {
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles.titleArea}>
-            <span className={styles.subtitle}>DISCOVER CATEGORIES</span>
-            <h2 className={styles.title}>Searching is more easy<br/>by category</h2>
+            <span className={styles.subtitle}>{t('home.categories.discover')}</span>
+            <h2 className={styles.title}>{t('home.categories.title')}</h2>
           </div>
           <p className={styles.description}>
-            Explore our meticulously curated categories to find exactly what you&apos;re looking for. From world-class dining to elite fitness centers, discover the best your city has to offer.
+            {t('home.categories.description')}
           </p>
         </div>
 
@@ -66,8 +68,8 @@ export default function Categories() {
                 <cat.icon size={24} strokeWidth={1.5} />
               </div>
               <div className={styles.cardContent}>
-                <h3 className={styles.cardTitle}>{cat.title}</h3>
-                <p className={styles.cardDesc}>{counts[cat.dbCategory] ?? 0} Places</p>
+                <h3 className={styles.cardTitle}>{t(`category.${cat.title.toLowerCase()}`)}</h3>
+                <p className={styles.cardDesc}>{counts[cat.dbCategory] ?? 0} {t('home.categories.places')}</p>
               </div>
             </Link>
           ))}
