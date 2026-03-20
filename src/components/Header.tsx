@@ -6,7 +6,6 @@ import { useState } from "react";
 import { Menu, X, User, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
-import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/lib/language-context";
 
 export default function Header() {
@@ -47,7 +46,6 @@ export default function Header() {
         </nav>
 
         <div className={styles.authGroup}>
-          <LanguageSwitcher />
           {loading ? null : user ? (
             <>
               <Link href="/dashboard" className={styles.loginLink} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

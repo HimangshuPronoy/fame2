@@ -483,7 +483,7 @@ export function detectLanguage(): Language {
     return 'mn';
   }
   
-  return 'en';
+  return 'mn';
 }
 
 export function setLanguage(lang: Language) {
