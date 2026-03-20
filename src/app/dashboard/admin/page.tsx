@@ -5,6 +5,7 @@ import { PlusCircle, Edit2, Trash2, CheckCircle2, X, Loader2 } from "lucide-reac
 import styles from "./admin.module.css";
 import { supabase, Listing } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 
 const CATEGORIES = ["Fitness", "Gym", "Restaurants", "Nightlife", "Spa", "Beauty", "Wellness", "Hotels"];
 
@@ -47,6 +48,7 @@ const emptyForm = {
 
 export default function AdminDashboard() {
   useAuth(); // Auth context available for future use
+  const { t } = useLanguage();
   const [listings, setListings] = useState<Listing[]>([]);
   const [dbLoading, setDbLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -211,22 +213,22 @@ export default function AdminDashboard() {
       <header className={styles.header}>
         <div className={styles.headerTop}>
           <div>
-            <h1 className={styles.title}>Manage Listings</h1>
-            <p className={styles.subtitle}>Add, edit, or remove listings from the platform.</p>
+            <h1 className={styles.title}>{t('admin.title')}</h1>
+            <p className={styles.subtitle}>{t('admin.subtitle')}</p>
           </div>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button 
               className={styles.dangerBtn} 
               onClick={handleClearAllData}
               disabled={clearingData}
-              title="Clear all listings from database"
+              title={t('admin.clearAll')}
             >
               {clearingData ? <Loader2 size={18} /> : '🗑️'}
-              <span>{clearingData ? 'Clearing...' : 'Clear All'}</span>
+              <span>{clearingData ? t('common.loading') : t('admin.clearAll')}</span>
             </button>
             <button className={styles.addBtn} onClick={openAdd}>
               <PlusCircle size={18} />
-              <span>Add Listing</span>
+              <span>{t('admin.addListing')}</span>
             </button>
           </div>
         </div>
