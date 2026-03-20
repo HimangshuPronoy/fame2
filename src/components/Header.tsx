@@ -42,6 +42,8 @@ export default function Header() {
             </div>
           </div>
           <Link href="/listings" className={styles.navLink}>{t('nav.listings')}</Link>
+          <Link href="/how-it-works" className={styles.navLink}>{t('nav.howItWorks') || 'How it Works'}</Link>
+          <Link href="/concierge" className={styles.navLink}>{t('nav.concierge') || 'Concierge'}</Link>
         </nav>
 
         <div className={styles.authGroup}>
@@ -81,6 +83,8 @@ export default function Header() {
           <Link href="/listings?category=Beauty" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>{t('category.beauty')}</Link>
           <Link href="/listings?category=Nightlife" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>{t('category.nightlife')}</Link>
           <Link href="/listings" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>{t('nav.listings')}</Link>
+          <Link href="/how-it-works" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>{t('nav.howItWorks') || 'How it Works'}</Link>
+          <Link href="/concierge" className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>{t('nav.concierge') || 'Concierge'}</Link>
           <div className={styles.mobileAuthGroup}>
             {user ? (
               <>

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
-import { LayoutDashboard, Settings, LogOut, ArrowLeft, User } from "lucide-react";
+import { LayoutDashboard, Settings, LogOut, ArrowLeft, User, List, PlusCircle, Bell, Search, MessageCircle } from "lucide-react";
 import styles from "./layout.module.css";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -44,68 +44,110 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className={styles.dashboardContainer}>
       <aside className={styles.sidebar}>
         <div className={styles.logoWrapper}>
-          <Link href="/" className={styles.logo}>Fame<span style={{ color: '#3b82f6' }}>.</span></Link>
-        </div>
-
-        {/* User Avatar Section */}
-        <div className={styles.userSection}>
-          <div className={styles.userAvatar}>
-            <User size={20} />
-          </div>
-          <div className={styles.userInfo}>
-            <span className={styles.userName}>{profile?.full_name ?? user.email?.split("@")[0]}</span>
-            <span className={styles.userRole}>{profile?.role === "admin" ? "Admin" : "Member"}</span>
-          </div>
+          <Link href="/" className={styles.logo}>
+            Fame<span style={{ color: '#3b82f6' }}>.</span>
+          </Link>
         </div>
 
         <nav className={styles.nav}>
-          <Link href="/dashboard/user" className={styles.navItem}>
-            <LayoutDashboard size={18} />
-            <span>Overview</span>
-          </Link>
-          <Link href="/dashboard/profile" className={styles.navItem}>
-            <User size={18} />
-            <span>Profile</span>
-          </Link>
-          <Link href="/dashboard/saved" className={styles.navItem}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-            <span>Saved</span>
-          </Link>
-          <Link href="/dashboard/bookings" className={styles.navItem}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-            <span>Bookings</span>
-          </Link>
-          {profile?.role === "admin" && (
-            <Link href="/dashboard/admin" className={styles.navItem}>
-              <Settings size={18} />
-              <span>Admin Panel</span>
+          <div className={styles.navGroup}>
+            <span className={styles.navGroupTitle}>Main Menu</span>
+            {profile?.role === "business_owner" ? (
+              <>
+                <Link href="/dashboard/business" className={styles.navItem}>
+                  <LayoutDashboard size={18} />
+                  <span>Dashboard</span>
+                </Link>
+                <Link href="/dashboard/my-listings" className={styles.navItem}>
+                  <List size={18} />
+                  <span>My Listings</span>
+                </Link>
+                <Link href="/dashboard/create-listing" className={styles.navItem}>
+                  <PlusCircle size={18} />
+                  <span>Create New</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/dashboard/user" className={styles.navItem}>
+                  <LayoutDashboard size={18} />
+                  <span>Overview</span>
+                </Link>
+                <Link href="/dashboard/saved" className={styles.navItem}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  <span>Saved Items</span>
+                </Link>
+                <Link href="/dashboard/bookings" className={styles.navItem}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <span>My Bookings</span>
+                </Link>
+              </>
+            )}
+          </div>
+
+          <div className={styles.navGroup}>
+            <span className={styles.navGroupTitle}>Account</span>
+            <Link href="/dashboard/profile" className={styles.navItem}>
+              <User size={18} />
+              <span>Settings</span>
             </Link>
-          )}
+            {profile?.role === "admin" && (
+              <Link href="/dashboard/admin" className={styles.navItem}>
+                <Settings size={18} />
+                <span>Admin Panel</span>
+              </Link>
+            )}
+          </div>
         </nav>
+
         <div className={styles.footerNav}>
           <Link href="/" className={styles.navItem}>
             <ArrowLeft size={18} />
-            <span>Back to Home</span>
+            <span>Back to Site</span>
           </Link>
-          <button
-            onClick={handleSignOut}
-            className={`${styles.navItem} ${styles.logout}`}
-          >
+          <button onClick={handleSignOut} className={`${styles.navItem} ${styles.logout}`}>
             <LogOut size={18} />
-            <span>Sign Out</span>
+            <span>Log Out</span>
           </button>
         </div>
       </aside>
-      <main className={styles.mainContent}>
-        {children}
-      </main>
+
+      <div className={styles.mainWrapper}>
+        <header className={styles.topBar}>
+          <div className={styles.searchWrapper}>
+            <Search size={18} className={styles.searchIcon} />
+            <input type="text" placeholder="Search tasks, reports, listings..." className={styles.searchInput} />
+          </div>
+          
+          <div className={styles.topBarActions}>
+            <button className={styles.actionBtn}>
+              <Bell size={20} />
+              <span className={styles.notificationBadge} />
+            </button>
+            <button className={styles.actionBtn}>
+              <MessageCircle size={20} />
+            </button>
+            <div className={styles.divider} />
+            <div className={styles.userDropdown}>
+              <div className={styles.userAvatarSmall}>
+                {profile?.full_name?.[0] ?? user.email?.[0]?.toUpperCase()}
+              </div>
+              <span className={styles.userNameSmall}>{profile?.full_name ?? user.email?.split("@")[0]}</span>
+            </div>
+          </div>
+        </header>
+
+        <main className={styles.mainContent}>
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

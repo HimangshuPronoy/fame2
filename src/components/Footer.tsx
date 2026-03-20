@@ -27,9 +27,9 @@ export default function Footer() {
             <ul className={styles.linkList}>
               <li><Link href="/listings" className={styles.link}>Explore Listings</Link></li>
               <li><Link href="/listings" className={styles.link}>Trending Locations</Link></li>
-              <li><Link href="/dashboard/user" className={styles.link}>Submit a Listing</Link></li>
+              <li><Link href="/dashboard" className={styles.link}>Submit a Listing</Link></li>
               <li><Link href="/login" className={styles.link}>Member Login</Link></li>
-              <li><Link href="/dashboard/admin" className={styles.link}>Admin Portal</Link></li>
+              <li><Link href="/dashboard" className={styles.link}>Admin Portal</Link></li>
             </ul>
           </div>
 

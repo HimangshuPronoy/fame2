@@ -56,6 +56,8 @@ export interface Listing {
   social_links: Record<string, string> | null
   is_featured: boolean
   is_active: boolean
+  views?: number
+  clicks?: number
   created_at: string
   updated_at: string
 }

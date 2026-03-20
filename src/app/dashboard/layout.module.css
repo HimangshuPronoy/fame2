@@ -2,8 +2,9 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background-color: #f8fafc;
-  color: #111827;
+  background-color: #f0f4f8; /* Soft light gray-blue */
+  color: #1a1a1a;
+  font-family: 'Inter', -apple-system, sans-serif;
 }
 
 /* Loading Screen */
@@ -34,28 +35,26 @@
 
 /* Sidebar */
 .sidebar {
-  width: 260px;
-  background-color: #ffffff;
-  border-right: 1px solid #f0f0f0;
+  width: 280px;
+  background-color: #1e293b; /* Dark slate */
   display: flex;
   flex-direction: column;
-  padding: 28px 20px;
-  position: sticky;
-  top: 0;
+  padding: 32px 24px;
+  position: relative;
   height: 100vh;
   z-index: 50;
+  color: #94a3b8;
 }
 
 .logoWrapper {
-  margin-bottom: 32px;
+  margin-bottom: 48px;
   padding-left: 12px;
 }
 
 .logo {
-  font-family: var(--font-sans);
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 800;
-  color: #111827;
+  color: #ffffff;
   letter-spacing: -1px;
   text-decoration: none;
 }
@@ -108,40 +107,48 @@
   font-weight: 500;
 }
 
-/* Nav */
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
+.navGroup {
+  margin-bottom: 32px;
+}
+
+.navGroupTitle {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  padding-left: 14px;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 11px 14px;
-  border-radius: 10px;
-  color: #64748b;
-  font-size: 0.9rem;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #94a3b8;
+  font-size: 0.95rem;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   border: none;
   background: none;
   cursor: pointer;
   width: 100%;
-  text-align: left;
+  margin-bottom: 4px;
 }
 
 .navItem:hover {
-  color: #111827;
-  background-color: #f1f5f9;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-.navItem:first-of-type {
-  color: #3b82f6;
-  background-color: #eff6ff;
+.navItem[style*="background-color: #eff6ff"] {
+  color: #ffffff;
+  background-color: #3b82f6 !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .footerNav {
@@ -158,14 +165,134 @@
   background-color: #fef2f2 !important;
 }
 
+/* Main Wrapper & Top Bar */
+.mainWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topBar {
+  height: 80px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  z-index: 40;
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 0 16px;
+  width: 400px;
+  height: 44px;
+}
+
+.searchIcon {
+  color: #94a3b8;
+}
+
+.searchInput {
+  background: transparent;
+  border: none;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  width: 100%;
+  outline: none;
+}
+
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.actionBtn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.actionBtn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.notificationBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: #e2e8f0;
+  margin: 0 8px;
+}
+
+.userDropdown {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.userDropdown:hover {
+  background: #f1f5f9;
+}
+
+.userAvatarSmall {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.userNameSmall {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
 /* Main Content */
 .mainContent {
   flex: 1;
-  padding: 32px 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+  padding: 40px;
   overflow-y: auto;
+  background-color: #f8fafc;
 }
 
 @media (max-width: 1024px) {
