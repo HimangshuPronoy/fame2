@@ -21,7 +21,10 @@ const categoryIcons: Record<string, React.ElementType> = {
   default: Utensils,
 };
 
+import { useLanguage } from "@/lib/language-context";
+
 export default function ListingGrid() {
+  const { t } = useLanguage();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,8 +72,8 @@ export default function ListingGrid() {
         <div className={styles.container}>
           <div className={styles.headerRow}>
             <div className={styles.header}>
-              <span className={styles.subtitle}>TRENDING</span>
-              <h2 className={styles.title}>Popular Listings</h2>
+              <span className={styles.subtitle}>{t('home.listings.trending')}</span>
+              <h2 className={styles.title}>{t('home.listings.popular')}</h2>
             </div>
           </div>
           <div style={{ padding: "60px 0", textAlign: "center", color: "#9ca3af" }}>Loading listings...</div>
@@ -84,8 +87,8 @@ export default function ListingGrid() {
       <div className={styles.container}>
         <div className={styles.headerRow}>
           <div className={styles.header}>
-            <span className={styles.subtitle}>TRENDING</span>
-            <h2 className={styles.title}>Popular Listings</h2>
+            <span className={styles.subtitle}>{t('home.listings.trending')}</span>
+            <h2 className={styles.title}>{t('home.listings.popular')}</h2>
           </div>
           <div className={styles.navControls}>
             <button onClick={() => scroll("left")} className={styles.navBtn} aria-label="Scroll left">
@@ -109,9 +112,9 @@ export default function ListingGrid() {
                     <div style={{ background: "#f3f4f6", width: "100%", height: "100%" }} />
                   )}
                   <div className={styles.badges}>
-                    <span className={`${styles.badge} ${styles.badgeOpen}`}>Open</span>
+                    <span className={`${styles.badge} ${styles.badgeOpen}`}>{t('home.listings.open')}</span>
                     {listing.is_featured && (
-                      <span className={`${styles.badge} ${styles.badgeFeatured}`}>Featured</span>
+                      <span className={`${styles.badge} ${styles.badgeFeatured}`}>{t('home.listings.featured')}</span>
                     )}
                   </div>
                   {listing.author_avatar && (
@@ -139,7 +142,7 @@ export default function ListingGrid() {
                           />
                         ))}
                       </div>
-                      <span>({listing.reviews} Reviews)</span>
+                      <span>({listing.reviews} {t('home.listings.reviews')})</span>
                     </div>
                   </div>
 
@@ -162,7 +165,7 @@ export default function ListingGrid() {
 
                 <div className={styles.footer}>
                   <div className={styles.priceContainer}>
-                    <span className={styles.priceLabel}>From</span>
+                    <span className={styles.priceLabel}>{t('home.listings.from')}</span>
                     <span className={styles.priceValue}>{listing.price ?? "—"}</span>
                   </div>
                   <div className={styles.actions}>

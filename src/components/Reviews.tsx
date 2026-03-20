@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase, Review } from "@/lib/supabase";
 import { Star, User } from "lucide-react";
 import styles from "./Reviews.module.css";
+import { useLanguage } from "@/lib/language-context";
 
 interface ReviewWithProfile extends Review {
   profile: {
@@ -19,6 +20,7 @@ interface ReviewsProps {
 
 export default function Reviews({ listingId }: ReviewsProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [reviews, setReviews] = useState<ReviewWithProfile[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(5);
@@ -92,19 +94,21 @@ export default function Reviews({ listingId }: ReviewsProps) {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h2 className={styles.title}>Reviews</h2>
+          <h2 className={styles.title}>{t('reviews.title')}</h2>
           <div className={styles.summary}>
             <Star size={20} fill="currentColor" />
             <span className={styles.avgRating}>{averageRating}</span>
             <span className={styles.reviewCount}>
-              ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
+              {t('reviews.summary')
+                .replace('{count}', reviews.length.toString())
+                .replace('{label}', reviews.length === 1 ? t('reviews.label.single') : t('reviews.label.plural'))}
             </span>
           </div>
         </div>
 
         {user && !userReview && (
           <button onClick={() => setShowForm(!showForm)} className={styles.writeBtn}>
-            {showForm ? "Cancel" : "Write a Review"}
+            {showForm ? t('reviews.cancelBtn') : t('reviews.writeBtn')}
           </button>
         )}
       </div>
@@ -112,7 +116,7 @@ export default function Reviews({ listingId }: ReviewsProps) {
       {showForm && (
         <form onSubmit={handleSubmit} className={styles.reviewForm}>
           <div className={styles.formGroup}>
-            <label>Rating</label>
+            <label>{t('reviews.form.rating')}</label>
             <div className={styles.starRating}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -132,29 +136,29 @@ export default function Reviews({ listingId }: ReviewsProps) {
           </div>
 
           <div className={styles.formGroup}>
-            <label>Title</label>
+            <label>{t('reviews.form.title')}</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Sum up your experience"
+              placeholder={t('reviews.form.titlePlaceholder')}
               maxLength={100}
             />
           </div>
 
           <div className={styles.formGroup}>
-            <label>Your Review</label>
+            <label>{t('reviews.form.comment')}</label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Share your thoughts..."
+              placeholder={t('reviews.form.commentPlaceholder')}
               rows={5}
               required
             />
           </div>
 
           <button type="submit" disabled={submitting} className={styles.submitBtn}>
-            {submitting ? "Submitting..." : "Submit Review"}
+            {submitting ? t('reviews.form.submitting') : t('reviews.form.submit')}
           </button>
         </form>
       )}
@@ -162,7 +166,7 @@ export default function Reviews({ listingId }: ReviewsProps) {
       <div className={styles.reviewsList}>
         {reviews.length === 0 ? (
           <div className={styles.empty}>
-            <p>No reviews yet. Be the first to share your experience!</p>
+            <p>{t('reviews.empty')}</p>
           </div>
         ) : (
           reviews.map((review) => (
@@ -174,7 +178,7 @@ export default function Reviews({ listingId }: ReviewsProps) {
                   </div>
                   <div>
                     <div className={styles.userName}>
-                      {review.profile?.full_name || "Anonymous"}
+                      {review.profile?.full_name || t('reviews.anonymous')}
                     </div>
                     <div className={styles.reviewDate}>
                       {new Date(review.created_at).toLocaleDateString()}

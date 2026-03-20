@@ -55,9 +55,9 @@ export default function BusinessOwnerDashboard() {
     return (
       <div className={styles.container}>
         <div className={styles.accessDenied}>
-          <h2>Access Denied</h2>
-          <p>This dashboard is only for business owners.</p>
-          <Link href="/dashboard" className={styles.backBtn}>Back to Dashboard</Link>
+          <h2>{t('common.error')}</h2>
+          <p>{t('dashboard.business.reports.empty')}</p>
+          <Link href="/dashboard" className={styles.backBtn}>{t('common.back')}</Link>
         </div>
       </div>
     );
@@ -189,7 +189,7 @@ export default function BusinessOwnerDashboard() {
                   />
                 </svg>
                 <div className={styles.chartLabels}>
-                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                  <span>{t('admin.table.month')} 1</span><span>{t('admin.table.month')} 2</span><span>{t('admin.table.month')} 3</span><span>{t('admin.table.month')} 4</span><span>{t('admin.table.month')} 5</span><span>{t('admin.table.month')} 6</span>
                 </div>
               </div>
             </div>
@@ -207,7 +207,7 @@ export default function BusinessOwnerDashboard() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Google Search</td>
+                    <td>{t('business.analytics.google')}</td>
                     <td>842</td>
                     <td>124</td>
                     <td>14.7%</td>
@@ -221,7 +221,7 @@ export default function BusinessOwnerDashboard() {
                     <td className={styles.up}><TrendingUp size={14} /></td>
                   </tr>
                   <tr>
-                    <td>Instagram/Meta</td>
+                    <td>{t('business.analytics.social')}</td>
                     <td>421</td>
                     <td>32</td>
                     <td>7.6%</td>
@@ -272,15 +272,15 @@ export default function BusinessOwnerDashboard() {
             <ul className={styles.taskList}>
               <li className={styles.taskItem}>
                 <CheckCircle2 size={16} className={styles.taskDone} />
-                <span>Optimize Google Business Profile</span>
+                <span>{t('business.tasks.optimize')}</span>
               </li>
               <li className={styles.taskItem}>
                 <CheckCircle2 size={16} className={styles.taskDone} />
-                <span>Index new services for AI</span>
+                <span>{t('business.tasks.index')}</span>
               </li>
               <li className={styles.taskItem}>
                 <div className={styles.taskBullet} />
-                <span>Shoot social media content</span>
+                <span>{t('business.tasks.content')}</span>
               </li>
             </ul>
           </section>
@@ -293,8 +293,8 @@ export default function BusinessOwnerDashboard() {
             <div className={styles.activeTask}>
               <div className={styles.activeTaskPulse} />
               <div className={styles.activeTaskInfo}>
-                <span className={styles.activeTaskName}>SEO Content Writing</span>
-                <span className={styles.activeTaskSub}>For &quot;Best Gym in UB&quot;</span>
+                <span className={styles.activeTaskName}>{t('business.active.seo')}</span>
+                <span className={styles.activeTaskSub}>{t('business.active.gym')}</span>
               </div>
             </div>
           </section>
@@ -314,15 +314,15 @@ export default function BusinessOwnerDashboard() {
               <div className={styles.activityItem}>
                 <div className={styles.activityIcon}><Plus size={14} /></div>
                 <div className={styles.activityInfo}>
-                  <p>Added 5 new photos</p>
-                  <span>2 hours ago</span>
+                  <p>{t('business.activity.photos')}</p>
+                  <span>{t('business.activity.time.2h')}</span>
                 </div>
               </div>
               <div className={styles.activityItem}>
                 <div className={styles.activityIcon}><Share2 size={14} /></div>
                 <div className={styles.activityInfo}>
-                  <p>Social accounts linked</p>
-                  <span>Yesterday</span>
+                  <p>{t('business.activity.links')}</p>
+                  <span>{t('business.activity.time.yest')}</span>
                 </div>
               </div>
             </div>

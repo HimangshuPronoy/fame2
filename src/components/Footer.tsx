@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Youtube, MapPin, Mail, Phone } from "lucide-react";
 import styles from "./Footer.module.css";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -12,7 +17,7 @@ export default function Footer() {
               Fame<span className={styles.logoDot}>.</span>
             </Link>
             <p className={styles.brandDesc}>
-              Discover the extraordinary. We hand-verify the world&apos;s most exclusive restaurants, secret nightspots, and elite wellness centers.
+              {t('footer.brandDesc')}
             </p>
             <div className={styles.socials}>
               <a href="https://facebook.com" target="_blank" rel="noreferrer" className={styles.socialLink}><Facebook size={20} /></a>
@@ -23,52 +28,52 @@ export default function Footer() {
           </div>
 
           <div className={styles.gridCol}>
-            <h4 className={styles.colTitle}>Quick Links</h4>
+            <h4 className={styles.colTitle}>{t('footer.quickLinks')}</h4>
             <ul className={styles.linkList}>
-              <li><Link href="/listings" className={styles.link}>Explore Listings</Link></li>
-              <li><Link href="/listings" className={styles.link}>Trending Locations</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Submit a Listing</Link></li>
-              <li><Link href="/login" className={styles.link}>Member Login</Link></li>
-              <li><Link href="/dashboard" className={styles.link}>Admin Portal</Link></li>
+              <li><Link href="/listings" className={styles.link}>{t('footer.exploreListings')}</Link></li>
+              <li><Link href="/listings" className={styles.link}>{t('footer.trendingLocations')}</Link></li>
+              <li><Link href="/dashboard" className={styles.link}>{t('footer.submitListing')}</Link></li>
+              <li><Link href="/login" className={styles.link}>{t('footer.memberLogin')}</Link></li>
+              <li><Link href="/dashboard" className={styles.link}>{t('footer.adminPortal')}</Link></li>
             </ul>
           </div>
 
           <div className={styles.gridCol}>
-            <h4 className={styles.colTitle}>Categories</h4>
+            <h4 className={styles.colTitle}>{t('footer.categories')}</h4>
             <ul className={styles.linkList}>
-              <li><Link href="/listings?category=Restaurants" className={styles.link}>Fine Dining</Link></li>
-              <li><Link href="/listings?category=Nightlife" className={styles.link}>Exclusive Nightlife</Link></li>
-              <li><Link href="/listings?category=Fitness" className={styles.link}>Elite Fitness</Link></li>
-              <li><Link href="/listings?category=Retail" className={styles.link}>Luxury Shopping</Link></li>
-              <li><Link href="/listings?category=Wellness" className={styles.link}>Wellness Spas</Link></li>
+              <li><Link href="/listings?category=Restaurants" className={styles.link}>{t('footer.fineDining')}</Link></li>
+              <li><Link href="/listings?category=Nightlife" className={styles.link}>{t('footer.nightlife')}</Link></li>
+              <li><Link href="/listings?category=Fitness" className={styles.link}>{t('footer.fitness')}</Link></li>
+              <li><Link href="/listings?category=Retail" className={styles.link}>{t('footer.shopping')}</Link></li>
+              <li><Link href="/listings?category=Wellness" className={styles.link}>{t('footer.wellness')}</Link></li>
             </ul>
           </div>
 
           <div className={styles.contactCol}>
-            <h4 className={styles.colTitle}>Contact Us</h4>
+            <h4 className={styles.colTitle}>{t('footer.contactUs')}</h4>
             <div className={styles.contactItem}>
               <MapPin size={18} className={styles.contactIcon} />
-              <span>123 Luxury Ave, Manhattan, NY 10001</span>
+              <span>{t('footer.address')}</span>
             </div>
             <div className={styles.contactItem}>
               <Phone size={18} className={styles.contactIcon} />
-              <a href="tel:+1234567890" className={styles.link}>+1 (234) 567-890</a>
+              <a href="tel:+97600000000" className={styles.link}>+976 0000-0000</a>
             </div>
             <div className={styles.contactItem}>
               <Mail size={18} className={styles.contactIcon} />
-              <a href="mailto:concierge@fame.com" className={styles.link}>concierge@fame.com</a>
+              <a href="mailto:concierge@fame.mn" className={styles.link}>concierge@fame.mn</a>
             </div>
           </div>
         </div>
 
         <div className={styles.bottomSection}>
           <p className={styles.copyright}>
-            &copy; {new Date().getFullYear()} Fame Luxury Directory. All rights reserved.
+            &copy; {new Date().getFullYear()} Fame Luxury Directory. {t('footer.rights')}
           </p>
           <div className={styles.bottomLinks}>
-            <Link href="/" className={styles.bottomLink}>Privacy Policy</Link>
-            <Link href="/" className={styles.bottomLink}>Terms of Service</Link>
-            <Link href="/" className={styles.bottomLink}>Cookie Context</Link>
+            <Link href="/" className={styles.bottomLink}>{t('footer.privacyPolicy')}</Link>
+            <Link href="/" className={styles.bottomLink}>{t('footer.termsOfService')}</Link>
+            <Link href="/" className={styles.bottomLink}>{t('footer.cookiePolicy')}</Link>
           </div>
         </div>
       </div>

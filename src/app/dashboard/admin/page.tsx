@@ -246,17 +246,17 @@ export default function AdminDashboard() {
       <div className={styles.tabs}>
         <button className={`${styles.tab} ${activeTab === 'listings' ? styles.activeTab : ''}`} onClick={() => setActiveTab('listings')}>
           <Layout size={18} className={styles.tabIcon} />
-          <span>{t('categories.listings')}</span>
+          <span>{t('admin.tabs.listings')}</span>
           <span className={styles.badge}>{listings.length}</span>
         </button>
         <button className={`${styles.tab} ${activeTab === 'users' ? styles.activeTab : ''}`} onClick={() => setActiveTab('users')}>
           <Users size={18} className={styles.tabIcon} />
-          <span>Users</span>
+          <span>{t('admin.tabs.users')}</span>
           <span className={styles.badge}>{profiles.length}</span>
         </button>
         <button className={`${styles.tab} ${activeTab === 'reports' ? styles.activeTab : ''}`} onClick={() => setActiveTab('reports')}>
           <FileText size={18} className={styles.tabIcon} />
-          <span>Reports</span>
+          <span>{t('admin.tabs.reports')}</span>
           <span className={styles.badge}>{reports.length}</span>
         </button>
       </div>
@@ -264,15 +264,15 @@ export default function AdminDashboard() {
       <div className={styles.content}>
         {activeTab === 'listings' && (
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Managed Listings</h2>
+            <h2 className={styles.cardTitle}>{t('admin.tabs.listings')}</h2>
             {dbLoading ? <Loader2 className="spin" /> : (
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>{t('admin.table.title')}</th>
+                    <th>{t('admin.table.category')}</th>
+                    <th>{t('admin.table.status')}</th>
+                    <th>{t('admin.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -306,14 +306,14 @@ export default function AdminDashboard() {
 
         {activeTab === 'users' && (
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Global User Directory</h2>
+            <h2 className={styles.cardTitle}>{t('admin.tabs.users')}</h2>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>User</th>
-                  <th>ID</th>
-                  <th>Current Role</th>
-                  <th>Management</th>
+                  <th>{t('admin.table.user')}</th>
+                  <th>{t('admin.table.id')}</th>
+                  <th>{t('admin.table.role')}</th>
+                  <th>{t('admin.table.manage')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -344,19 +344,19 @@ export default function AdminDashboard() {
         {activeTab === 'reports' && (
           <section className={styles.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-              <h2 className={styles.cardTitle}>Performance Reports</h2>
+              <h2 className={styles.cardTitle}>{t('admin.tabs.reports')}</h2>
               <button className={styles.addBtn} onClick={() => { setShowReportForm(true); setEditingReportId(null); setReportForm(emptyReport); }}>
-                <PlusCircle size={16} /> New Report
+                <PlusCircle size={16} /> {t('admin.form.report.create')}
               </button>
             </div>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Month</th>
-                  <th>Business</th>
-                  <th>Views</th>
-                  <th>Mentions</th>
-                  <th>Actions</th>
+                  <th>{t('admin.table.month')}</th>
+                  <th>{t('admin.table.business')}</th>
+                  <th>{t('admin.table.views')}</th>
+                  <th>{t('admin.table.mentions')}</th>
+                  <th>{t('admin.table.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -396,12 +396,12 @@ export default function AdminDashboard() {
           <div className={styles.modal}>
             <div className={styles.card}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: '20px' }}>
-                <h2 className={styles.cardTitle}>{editingListingId ? "Edit Listing" : "Add New Listing"}</h2>
+                <h2 className={styles.cardTitle}>{editingListingId ? t('admin.form.editListing') : t('admin.form.newListing')}</h2>
                 <button onClick={() => setShowListingForm(false)} className={styles.iconBtn}><X size={20} /></button>
               </div>
               <form onSubmit={submitListing} className={styles.form}>
                 <div className={styles.formGroup}>
-                  <label>Title *</label>
+                  <label>{t('form.title')} *</label>
                   <input type="text" value={listingForm.title} onChange={(e) => setListingForm({...listingForm, title: e.target.value})} className={styles.input} required />
                 </div>
                 <div className={styles.formRow}>
@@ -424,9 +424,9 @@ export default function AdminDashboard() {
                   <input type="checkbox" checked={listingForm.is_featured} onChange={(e) => setListingForm({...listingForm, is_featured: e.target.checked})} />
                   <label>Mark as Featured</label>
                 </div>
-                {saveSuccess ? <div className={styles.successMessage}>Saved!</div> : (
+                {saveSuccess ? <div className={styles.successMessage}>{t('form.saved')}</div> : (
                   <button type="submit" className={styles.submitBtn} disabled={saving}>
-                    {saving ? <Loader2 className="spin" size={16} /> : <Save size={16} />} <span>{editingListingId ? "Update" : "Save"}</span>
+                    {saving ? <Loader2 className="spin" size={16} /> : <Save size={16} />} <span>{editingListingId ? t('admin.form.update') : t('admin.form.save')}</span>
                   </button>
                 )}
               </form>

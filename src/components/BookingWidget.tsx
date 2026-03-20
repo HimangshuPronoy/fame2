@@ -8,6 +8,7 @@ import { Share, Check, Calendar, Users } from "lucide-react";
 import SaveButton from "./SaveButton";
 import styles from "@/app/listing/[id]/page.module.css";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/lib/language-context";
 
 interface BookingWidgetProps {
   listingId: string;
@@ -17,6 +18,7 @@ interface BookingWidgetProps {
 export default function BookingWidget({ listingId, price }: BookingWidgetProps) {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
   const [bookingStatus, setBookingStatus] = useState<"idle" | "loading" | "success">("idle");
   const [copied, setCopied] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
@@ -37,7 +39,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
     }
 
     if (!bookingDate) {
-      alert("Please select a date");
+      alert(t('form.required'));
       return;
     }
 
@@ -53,7 +55,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
     });
 
     if (error) {
-      alert("Error creating booking. Please try again.");
+      alert(t('common.error'));
       setBookingStatus("idle");
     } else {
       setBookingStatus("success");
@@ -88,7 +90,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
   return (
     <div className={styles.bookingWidget}>
       <div className={styles.priceHeader}>
-        <span className={styles.priceLabel}>Starting from</span>
+        <span className={styles.priceLabel}>{t('listing.booking.startingFrom')}</span>
         <span className={styles.price}>{price}</span>
       </div>
 
@@ -97,7 +99,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
           <div className={styles.formGroup}>
             <label>
               <Calendar size={16} />
-              Date *
+              {t('listing.booking.date')} *
             </label>
             <input
               type="date"
@@ -109,7 +111,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
           </div>
 
           <div className={styles.formGroup}>
-            <label>Time (optional)</label>
+            <label>{t('listing.booking.time')}</label>
             <input
               type="time"
               value={bookingTime}
@@ -120,7 +122,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
           <div className={styles.formGroup}>
             <label>
               <Users size={16} />
-              Guests
+              {t('listing.booking.guests')}
             </label>
             <input
               type="number"
@@ -132,12 +134,12 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
           </div>
 
           <div className={styles.formGroup}>
-            <label>Special Requests</label>
+            <label>{t('listing.booking.requests')}</label>
             <textarea
               value={specialRequests}
               onChange={(e) => setSpecialRequests(e.target.value)}
               rows={3}
-              placeholder="Any special requirements..."
+              placeholder={t('listing.booking.requestsPlaceholder')}
             />
           </div>
         </div>
@@ -157,7 +159,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              {showBookingForm ? "Confirm Booking" : "Request Booking"}
+              {showBookingForm ? t('listing.booking.confirmBtn') : t('listing.booking.requestBtn')}
             </motion.span>
           )}
           {bookingStatus === "loading" && (
@@ -167,7 +169,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              Processing...
+              {t('listing.booking.processing')}
             </motion.span>
           )}
           {bookingStatus === "success" && (
@@ -178,7 +180,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
               exit={{ opacity: 0, y: -10 }}
               style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              <Check size={18} /> Booking Confirmed!
+              <Check size={18} /> {t('listing.booking.confirmed')}
             </motion.span>
           )}
         </AnimatePresence>
@@ -189,7 +191,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
           onClick={() => setShowBookingForm(false)}
           className={styles.secondaryBtn}
         >
-          Cancel
+          {t('common.cancel')}
         </button>
       )}
 
@@ -197,7 +199,7 @@ export default function BookingWidget({ listingId, price }: BookingWidgetProps) 
         <SaveButton listingId={listingId} variant="full" className={styles.iconBtn} />
         <button onClick={handleShare} className={styles.iconBtn}>
           {copied ? <Check size={18} color="#22c55e" /> : <Share size={18} />}
-          {copied ? "Copied" : "Share"}
+          {copied ? t('listing.booking.copied') : t('listing.booking.share')}
         </button>
       </div>
     </div>

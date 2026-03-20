@@ -13,13 +13,13 @@
 .title {
   font-size: 2rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-main);
   margin-bottom: 8px;
   letter-spacing: -0.5px;
 }
 
 .subtitle {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 1.1rem;
 }
 
@@ -57,8 +57,8 @@
 }
 
 .statCard {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -68,14 +68,14 @@
 }
 
 .statCard:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .statLabel {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   display: block;
   margin-bottom: 12px;
   text-transform: uppercase;
@@ -91,7 +91,7 @@
 .statValue {
   font-size: 1.875rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .statChange {
@@ -105,8 +105,8 @@
 }
 
 .statChange.up {
-  color: #16a34a;
-  background: #f0fdf4;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
 }
 
 .statIcon {
@@ -131,8 +131,8 @@
 }
 
 .mainSection {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 32px;
 }
@@ -147,12 +147,12 @@
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .rangeTabs {
   display: flex;
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.05);
   padding: 4px;
   border-radius: 10px;
 }
@@ -170,18 +170,19 @@
 }
 
 .rangeTab.active {
-  background: white;
-  color: #1e293b;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chartPlaceholderLarge {
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 16px;
   padding: 32px 24px;
   margin-bottom: 32px;
   height: 300px;
   position: relative;
+  border: 1px solid var(--border);
 }
 
 .customChart {
@@ -216,24 +217,24 @@
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 12px 16px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 
 .summaryTable td {
   padding: 16px;
   font-size: 0.9rem;
-  color: #475569;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border);
 }
 
 .subsectionTitle {
   font-size: 1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-main);
   margin: 20px 0 12px;
 }
 
@@ -245,8 +246,8 @@
 }
 
 .sideWidget {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 24px;
   margin-bottom: 24px;
@@ -266,7 +267,7 @@
 .widgetTitle {
   font-size: 1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .planProgress {
@@ -275,7 +276,7 @@
 
 .progressBar {
   height: 8px;
-  background: #e2e8f0;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
   margin-bottom: 8px;
   overflow: hidden;
@@ -290,7 +291,7 @@
 .progressText {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .taskList {
@@ -307,7 +308,7 @@
   align-items: center;
   gap: 10px;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--text-muted);
 }
 
 .taskDone {
@@ -317,7 +318,7 @@
 .taskBullet {
   width: 16px;
   height: 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
 }
 
@@ -326,8 +327,9 @@
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: #eff6ff;
+  background: rgba(59, 130, 246, 0.1);
   border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .activeTaskPulse {
@@ -359,17 +361,18 @@
   display: block;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .activeTaskSub {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .contactWidget {
-  background: #1e293b;
-  color: white;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-main);
 }
 
 .contactWidget .widgetTitle {
@@ -378,7 +381,7 @@
 
 .contactText {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 20px;
 }
 
@@ -398,7 +401,7 @@
 }
 
 .contactActionBtn:hover {
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .activityList {
@@ -415,12 +418,12 @@
 .activityIcon {
   width: 28px;
   height: 28px;
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .activityInfo p {
@@ -428,7 +431,7 @@
   margin: 0;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .activityInfo span {
@@ -438,7 +441,7 @@
 
 .reportItem {
   padding: 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 
 .reportItem:last-child {
@@ -451,13 +454,13 @@
   gap: 8px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-main);
   margin-bottom: 12px;
 }
 
 .reportDescription {
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--text-muted);
   line-height: 1.6;
   margin-bottom: 16px;
 }
@@ -473,8 +476,8 @@
   gap: 4px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
-  background: #f1f5f9;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
   padding: 4px 10px;
   border-radius: 6px;
 }

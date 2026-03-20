@@ -1,13 +1,17 @@
+"use client";
+
 import { Search, ShieldCheck, MapPin } from "lucide-react";
 import styles from "./Features.module.css";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Features() {
+  const { t } = useLanguage();
   return (
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <span className={styles.subtitle}>HOW IT WORKS</span>
-          <h2 className={styles.title}>Discover Businesses Near You</h2>
+          <span className={styles.subtitle}>{t('features.subtitle')}</span>
+          <h2 className={styles.title}>{t('features.title')}</h2>
         </div>
 
         <div className={styles.stepsContainer}>
@@ -17,9 +21,9 @@ export default function Features() {
               <div className={styles.iconCircle}>
                 <Search size={24} strokeWidth={1.5} color="#111827" />
               </div>
-              <h3 className={styles.cardTitle}>Search & Discover</h3>
+              <h3 className={styles.cardTitle}>{t('features.step1.title')}</h3>
               <p className={styles.cardDesc}>
-                Find the best gyms, restaurants, spas, and nightlife in your area. AI-powered recommendations.
+                {t('features.step1.desc')}
               </p>
             </div>
 
@@ -27,9 +31,9 @@ export default function Features() {
               <div className={styles.iconCircle}>
                 <ShieldCheck size={24} strokeWidth={1.5} color="#111827" />
               </div>
-              <h3 className={styles.cardTitle}>Verified Quality</h3>
+              <h3 className={styles.cardTitle}>{t('features.step2.title')}</h3>
               <p className={styles.cardDesc}>
-                Every business is hand-curated and verified for quality. Only the best make it to Fame.
+                {t('features.step2.desc')}
               </p>
             </div>
 
@@ -37,9 +41,9 @@ export default function Features() {
               <div className={styles.iconCircle}>
                 <MapPin size={24} strokeWidth={1.5} color="#111827" />
               </div>
-              <h3 className={styles.cardTitle}>Visit & Enjoy</h3>
+              <h3 className={styles.cardTitle}>{t('features.step3.title')}</h3>
               <p className={styles.cardDesc}>
-                Get directions, contact info, and all the details you need to experience the best spots.
+                {t('features.step3.desc')}
               </p>
             </div>
           </div>

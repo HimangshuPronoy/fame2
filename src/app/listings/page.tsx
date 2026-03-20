@@ -8,6 +8,8 @@ import styles from "./listings.module.css";
 import Header from "@/components/Header";
 import { supabase, Listing } from "@/lib/supabase";
 
+import { useLanguage } from "@/lib/language-context";
+
 const CATEGORIES = ["Fitness", "Gym", "Restaurants", "Nightlife", "Spa", "Beauty", "Wellness", "Hotels"];
 
 export default function ListingsPage() {
@@ -17,6 +19,7 @@ export default function ListingsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<"rating" | "newest" | "name">("rating");
+  const { t } = useLanguage();
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   // Read category and query from URL search params
@@ -93,12 +96,12 @@ export default function ListingsPage() {
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>
-            {selectedCategory ? selectedCategory : "Explore Listings"}
+            {selectedCategory ? t(`category.${selectedCategory.toLowerCase()}`) : t('listings.title')}
           </h1>
           <p className={styles.heroSubtitle}>
             {selectedCategory
-              ? `Browse the best ${selectedCategory.toLowerCase()} spots curated by Fame.`
-              : "Premium lifestyle venues hand-picked by our curation team."}
+              ? t('listing.subtitle').replace('${category}', t(`category.${selectedCategory.toLowerCase()}`)) 
+              : t('listings.subtitle')}
           </p>
 
           {/* Search */}
@@ -106,7 +109,7 @@ export default function ListingsPage() {
             <Search size={18} className={styles.searchIcon} />
             <input
               type="text"
-              placeholder="Search gyms, restaurants, spas..."
+              placeholder={t('listings.search.placeholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className={styles.searchInput}
@@ -127,7 +130,7 @@ export default function ListingsPage() {
             className={`${styles.categoryPill} ${!selectedCategory ? styles.categoryPillActive : ""}`}
             onClick={() => setSelectedCategory(null)}
           >
-            All
+            {t('listings.filter.all')}
           </button>
           {CATEGORIES.map((cat) => (
             <button
@@ -135,27 +138,27 @@ export default function ListingsPage() {
               className={`${styles.categoryPill} ${selectedCategory === cat ? styles.categoryPillActive : ""}`}
               onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
             >
-              {cat}
+              {t(`category.${cat.toLowerCase()}`)}
             </button>
           ))}
         </div>
 
         <div className={styles.barRight}>
           <div className={styles.sortWrapper}>
-            <label className={styles.sortLabel}>Sort:</label>
+            <label className={styles.sortLabel}>{t('listings.filter.sortBy')}</label>
             <select
               className={styles.sortSelect}
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as "rating" | "newest" | "name")}
             >
-              <option value="rating">Top Rated</option>
-              <option value="newest">Newest</option>
-              <option value="name">A–Z</option>
+              <option value="rating">{t('listings.filter.topRated')}</option>
+              <option value="newest">{t('listings.filter.newest')}</option>
+              <option value="name">{t('listings.filter.az')}</option>
             </select>
           </div>
           <button className={styles.filterToggle} onClick={() => setShowFilters(!showFilters)}>
             <SlidersHorizontal size={16} />
-            Filters
+            {t('listings.filter.toggle')}
             <ChevronDown size={14} className={showFilters ? styles.rotated : ""} />
           </button>
         </div>
@@ -165,7 +168,7 @@ export default function ListingsPage() {
       {showFilters && (
         <div className={styles.filterPanel}>
           <div className={styles.filterGroup}>
-            <h4 className={styles.filterGroupTitle}>Category</h4>
+            <h4 className={styles.filterGroupTitle}>{t('form.category')}</h4>
             <div className={styles.filterChips}>
               {CATEGORIES.map((cat) => (
                 <button
@@ -173,18 +176,18 @@ export default function ListingsPage() {
                   className={`${styles.filterChip} ${selectedCategory === cat ? styles.filterChipActive : ""}`}
                   onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
                 >
-                  {cat}
+                  {t(`category.${cat.toLowerCase()}`)}
                 </button>
               ))}
             </div>
           </div>
           <div className={styles.filterGroup}>
-            <h4 className={styles.filterGroupTitle}>Sort By</h4>
+            <h4 className={styles.filterGroupTitle}>{t('listings.filter.sortBy')}</h4>
             <div className={styles.filterChips}>
               {[
-                { value: "rating", label: "⭐ Top Rated" },
-                { value: "newest", label: "🆕 Newest" },
-                { value: "name", label: "🔤 A–Z" },
+                { value: "rating", label: `⭐ ${t('listings.filter.topRated')}` },
+                { value: "newest", label: `🆕 ${t('listings.filter.newest')}` },
+                { value: "name", label: `🔤 ${t('listings.filter.az')}` },
               ].map((s) => (
                 <button
                   key={s.value}
@@ -202,11 +205,11 @@ export default function ListingsPage() {
       {/* Results Count */}
       <div className={styles.resultsBar}>
         <span className={styles.resultsText}>
-          {loading ? "Searching..." : `${listings.length} places found`}
+          {loading ? t('listings.results.searching') : t('listings.results.found').replace('{count}', listings.length.toString())}
         </span>
         {(selectedCategory || search) && (
           <button className={styles.clearFilter} onClick={() => { setSelectedCategory(null); setSearch(""); }}>
-            Clear all filters <X size={14} />
+            {t('listings.results.clear')} <X size={14} />
           </button>
         )}
       </div>
@@ -216,14 +219,14 @@ export default function ListingsPage() {
         {loading ? (
           <div className={styles.emptyState}>
             <div className={styles.spinner} />
-            <p>Loading listings...</p>
+            <p>{t('common.loading')}</p>
           </div>
         ) : listings.length === 0 ? (
           <div className={styles.emptyState}>
-            <p className={styles.emptyTitle}>No listings found</p>
-            <p className={styles.emptyDesc}>Try adjusting your filters or search term.</p>
+            <p className={styles.emptyTitle}>{t('listings.empty.title')}</p>
+            <p className={styles.emptyDesc}>{t('listings.empty.desc')}</p>
             <button className={styles.resetBtn} onClick={() => { setSelectedCategory(null); setSearch(""); }}>
-              Reset Filters
+              {t('listings.empty.reset')}
             </button>
           </div>
         ) : (
@@ -253,9 +256,9 @@ export default function ListingsPage() {
                     <Heart size={18} />
                   </button>
                   {listing.is_featured && (
-                    <span className={styles.featuredBadge}>FEATURED</span>
+                    <span className={styles.featuredBadge}>{t('listings.card.featured')}</span>
                   )}
-                  <span className={styles.categoryBadge}>{listing.category}</span>
+                  <span className={styles.categoryBadge}>{t(`category.${listing.category.toLowerCase()}`)}</span>
                 </div>
 
                 <div className={styles.cardBody}>
@@ -264,7 +267,7 @@ export default function ListingsPage() {
                       <Star size={12} fill="#fbbf24" color="#fbbf24" />
                       <span>{listing.rating}</span>
                     </div>
-                    <span className={styles.reviewCount}>({listing.reviews} reviews)</span>
+                    <span className={styles.reviewCount}>({listing.reviews} {t('listings.card.reviews')})</span>
                   </div>
 
                   <h3 className={styles.cardTitle}>{listing.title}</h3>
@@ -281,9 +284,9 @@ export default function ListingsPage() {
 
                   <div className={styles.cardFooter}>
                     <span className={styles.cardPrice}>
-                      {listing.price ?? "Contact"}
+                      {listing.price ?? t('listing.booking.contactForPrice')}
                     </span>
-                    <span className={styles.viewLink}>View Details →</span>
+                    <span className={styles.viewLink}>{t('listings.card.viewDetails')} →</span>
                   </div>
                 </div>
               </Link>

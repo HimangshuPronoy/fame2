@@ -10,12 +10,14 @@ import BookingWidget from "@/components/BookingWidget";
 import { trackListingView, trackListingClick } from "@/lib/analytics";
 
 import { Listing } from "@/lib/supabase";
+import { useLanguage } from "@/lib/language-context";
 
 interface ListingDetailClientProps {
   listing: Listing;
 }
 
 export default function ListingDetailClient({ listing }: ListingDetailClientProps) {
+  const { t } = useLanguage();
   // Track page view
   useEffect(() => {
     trackListingView(listing.id);
@@ -35,28 +37,28 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
       <aside className={styles.sidebar}>
         <div className={styles.sidebarContent}>
           <Link href="/listings" className={styles.backLink}>
-            <ArrowLeft size={16} /> Back to Listings
+            <ArrowLeft size={16} /> {t('listing.nav.back')}
           </Link>
 
           <nav className={styles.navMenu}>
             <button className={`${styles.navItem} ${styles.navItemActive}`}>
-              <LayoutGrid size={18} /> Overview
+              <LayoutGrid size={18} /> {t('listing.nav.overview')}
             </button>
             <button className={styles.navItem}>
-              <ImageIcon size={18} /> Gallery
+              <ImageIcon size={18} /> {t('listing.nav.gallery')}
             </button>
             <button className={styles.navItem}>
-              <MessageSquare size={18} /> Reviews ({listing.reviews})
+              <MessageSquare size={18} /> {t('listing.nav.reviews')} ({listing.reviews})
             </button>
             <button className={styles.navItem}>
-              <Map size={18} /> Location
+              <Map size={18} /> {t('listing.nav.location')}
             </button>
           </nav>
 
           <div className={styles.bookingWidget}>
             <BookingWidget 
               listingId={listing.id} 
-              price={listing.price ?? "Contact for pricing"} 
+              price={listing.price ?? t('listing.booking.contactForPrice')} 
             />
           </div>
         </div>
@@ -67,8 +69,8 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
         <div className={styles.heroHeader}>
           <div>
             <div className={styles.tags}>
-              <span className={styles.tag}>{listing.category}</span>
-              <span className={styles.tagStatus}>Open Now</span>
+              <span className={styles.tag}>{t(`category.${listing.category.toLowerCase()}`)}</span>
+              <span className={styles.tagStatus}>{t('listing.status.open')}</span>
             </div>
             <h1 className={styles.title}>{listing.title}</h1>
             <p className={styles.subtitle}>{listing.subtitle}</p>
@@ -77,7 +79,7 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
               <div className={styles.ratingInfo}>
                 <Star size={16} fill="#fbbf24" color="#fbbf24" />
                 <span className={styles.rating}>{listing.rating}</span>
-                <span className={styles.reviews}>({listing.reviews} reviews)</span>
+                <span className={styles.reviews}>({listing.reviews} {t('listings.card.reviews')})</span>
               </div>
               {listing.location && (
                 <div className={styles.location}>
@@ -110,7 +112,7 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
             <div className={styles.smallImageWrapper}>
               <Image src="https://images.unsplash.com/photo-1536922246289-88c42f957773?auto=format&fit=crop&q=80&w=2104" fill alt="detail 2" className={styles.gridImage} />
               <div className={styles.moreImagesOverlay}>
-                <span>More Photos</span>
+                <span>{t('listing.photos.more')}</span>
               </div>
             </div>
           </div>
@@ -119,13 +121,13 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
         <div className={styles.detailsGrid}>
           {listing.description && (
             <section className={styles.cardSection}>
-              <h2 className={styles.sectionTitle}>About this place</h2>
+              <h2 className={styles.sectionTitle}>{t('listing.details.about')}</h2>
               <p className={styles.description}>{listing.description}</p>
             </section>
           )}
 
           <section className={styles.cardSection}>
-            <h2 className={styles.sectionTitle}>Contact Information</h2>
+            <h2 className={styles.sectionTitle}>{t('listing.details.contact')}</h2>
             <div className={styles.contactList}>
               {listing.phone && (
                 <div className={styles.contactItem}>
@@ -143,13 +145,13 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
                     rel="noopener noreferrer"
                     onClick={handleWebsiteClick}
                   >
-                    Visit official website
+                    {t('listing.details.website')}
                   </a>
                 </div>
               )}
               <div className={styles.contactItem}>
                 <Clock size={18} className={styles.contactIcon} />
-                <span>9:00 AM – 10:00 PM (Today)</span>
+                <span>{t('listing.details.hoursToday').replace('{hours}', '9:00 AM – 10:00 PM')}</span>
               </div>
             </div>
           </section>

@@ -59,8 +59,6 @@ export default function UserDashboard() {
         if (listingsData) setRecentListings(listingsData as Listing[]);
 
         // 3. Fetch simulated activity (since we don't have a dedicated activity table yet)
-        // In a real app, you'd fetch from a 'user_activity' table.
-        // We'll synthesize it from bookings and reviews for now.
         const { data: recentBookings } = await supabase
           .from("bookings")
           .select("*, listings(title)")
@@ -79,13 +77,15 @@ export default function UserDashboard() {
           ...(recentBookings || []).map(b => ({
             id: `b-${b.id}`,
             type: 'booking' as const,
-            content: `Booking confirmed at ${b.listings?.title}`,
+            content: t('dashboard.user.activity.bookingConfirmed').replace('{title}', b.listings?.title || ''),
             date: b.created_at
           })),
           ...(recentReviews || []).map(r => ({
             id: `r-${r.id}`,
             type: 'review' as const,
-            content: `You left a ${r.rating}-star review for ${r.listings?.title}`,
+            content: t('dashboard.user.activity.reviewLeft')
+              .replace('{rating}', r.rating.toString())
+              .replace('{title}', r.listings?.title || ''),
             date: r.created_at
           }))
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -98,7 +98,7 @@ export default function UserDashboard() {
       }
     }
     fetchData();
-  }, [user]);
+  }, [user, t]);
 
   const displayName = profile?.full_name ?? user?.email?.split("@")[0] ?? "there";
 
@@ -226,7 +226,7 @@ export default function UserDashboard() {
                   </div>
                 </div>
               )) : (
-                <p className={styles.emptyActivity}>No recent activity found.</p>
+                <p className={styles.emptyActivity}>{t('dashboard.user.activity.empty')}</p>
               )}
             </div>
           </section>
@@ -239,10 +239,8 @@ export default function UserDashboard() {
               <Sparkles size={18} className={styles.aiIcon} />
               <h3 className={styles.widgetTitle}>{t('dashboard.user.aiTips.title')}</h3>
             </div>
-            <p className={styles.aiText}>
-              Based on your interest in <strong>Fitness</strong>, you might enjoy the new HIIT classes at Alpha Fitness next week!
-            </p>
-            <button className={styles.aiActionBtn}>Show More Tips</button>
+            <p className={styles.aiText} dangerouslySetInnerHTML={{ __html: t('dashboard.user.aiTips.fitnessTip') }} />
+            <button className={styles.aiActionBtn}>{t('dashboard.user.aiTips.showMore')}</button>
           </section>
 
           <section className={styles.sideWidget}>
@@ -258,7 +256,7 @@ export default function UserDashboard() {
               </Link>
               <Link href="/concierge" className={styles.quickLink}>
                 <Users size={16} />
-                <span>Concierge Service</span>
+                <span>{t('dashboard.user.quickAccess.concierge')}</span>
               </Link>
             </div>
           </section>
