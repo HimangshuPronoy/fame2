@@ -38,30 +38,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // 0. Safety fallback: never keep user on loading screen for more than 6 seconds
+    const safetyTimer = setTimeout(() => {
+      setLoading(false);
+    }, 6000);
+
+    // 1. Initial session check
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+      if (session?.user) {
+        // Fetch profile but don't block main loading state
+        void fetchProfile(session.user.id);
+      }
       setLoading(false);
+      clearTimeout(safetyTimer);
     }).catch(err => {
       console.error("Error getting session:", err);
       setLoading(false);
+      clearTimeout(safetyTimer);
     });
 
+    // 2. Auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          // Add a timeout for profile fetching so it doesn't block loading state
+          const profilePromise = fetchProfile(session.user.id);
+          const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000));
+          await Promise.race([profilePromise, timeoutPromise]);
         } else {
           setProfile(null);
         }
+        
         setLoading(false);
+        clearTimeout(safetyTimer);
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(safetyTimer);
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {

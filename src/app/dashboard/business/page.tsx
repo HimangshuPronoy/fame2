@@ -26,6 +26,7 @@ export default function BusinessOwnerDashboard() {
     }
     
     setLoading(true);
+    const timeout = setTimeout(() => setLoading(false), 8000);
     
     try {
       // Fetch business owner's listings
@@ -47,6 +48,7 @@ export default function BusinessOwnerDashboard() {
     } catch (error) {
       console.error("Error fetching business dashboard data:", error);
     } finally {
+      clearTimeout(timeout);
       setLoading(false);
     }
   }, [user]);

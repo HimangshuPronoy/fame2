@@ -117,19 +117,39 @@ export default function AdminDashboard() {
 
   const fetchData = useCallback(async () => {
     setDbLoading(true);
-    await Promise.all([fetchListings(), fetchProfiles(), fetchReports()]);
-    setDbLoading(false);
+    const timeout = setTimeout(() => setDbLoading(false), 8000);
+    try {
+      await Promise.all([fetchListings(), fetchProfiles(), fetchReports()]);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      clearTimeout(timeout);
+      setDbLoading(false);
+    }
   }, [fetchListings, fetchProfiles, fetchReports]);
 
-  // Platform Growth Data (Mocked for professional look)
-  const platformGrowthData = [
-    { name: 'Week 1', users: 12, listings: 4 },
-    { name: 'Week 2', users: 19, listings: 8 },
-    { name: 'Week 3', users: 32, listings: 15 },
-    { name: 'Week 4', users: 45, listings: 22 },
-    { name: 'Week 5', users: 58, listings: 28 },
-    { name: 'Week 6', users: 72, listings: 35 },
-  ];
+  const [platformGrowthData, setPlatformGrowthData] = useState<{name: string, users: number, listings: number}[]>([]);
+
+  useEffect(() => {
+    if (profiles.length > 0 || listings.length > 0) {
+      const now = new Date();
+      const weeks = [];
+      for (let i = 5; i >= 0; i--) {
+        const weekEnd = new Date(now.getTime() - (i * 7 * 24 * 60 * 60 * 1000));
+        const weekName = `Week ${6-i}`;
+        
+        const userCount = profiles.filter(p => new Date(p.created_at) <= weekEnd).length;
+        const listingCount = listings.filter(l => new Date(l.created_at) <= weekEnd).length;
+        
+        weeks.push({
+          name: weekName,
+          users: userCount,
+          listings: listingCount
+        });
+      }
+      setPlatformGrowthData(weeks);
+    }
+  }, [profiles, listings]);
 
   useEffect(() => {
     if (user && profile?.role === 'admin') {

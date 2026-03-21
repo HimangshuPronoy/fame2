@@ -31,22 +31,13 @@ export default function UserDashboard() {
   const [recentListings, setRecentListings] = useState<Listing[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
 
-  // Chart Data (Mocking trends for now)
-  const pointsHistory = [
-    { name: 'Jan', points: famePoints * 0.4 },
-    { name: 'Feb', points: famePoints * 0.6 },
-    { name: 'Mar', points: famePoints * 0.8 },
-    { name: 'Apr', points: famePoints }
-  ];
-
-  const categoryInterest = [
-    { name: t('category.fitness'), value: 400, color: '#3b82f6' },
-    { name: t('category.restaurants'), value: 300, color: '#10b981' },
-    { name: t('category.spa'), value: 200, color: '#f43f5e' },
-    { name: t('category.nightlife'), value: 100, color: '#eab308' },
-  ];
+  const [pointsHistory, setPointsHistory] = useState<{ name: string; points: number }[]>([]);
+  const [categoryInterest, setCategoryInterest] = useState<{ name: string; value: number; color: string }[]>([]);
 
   useEffect(() => {
+    const TIMEOUT_MS = 8000; // 8 second timeout safety
+    let isMounted = true;
+
     async function fetchData() {
       if (!user) {
         setLoading(false);
@@ -55,75 +46,150 @@ export default function UserDashboard() {
       
       setLoading(true);
       
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Request timed out")), TIMEOUT_MS)
+      );
+
       try {
-        // 1. Fetch counts
-        const [savedRes, bookingsRes, reviewsRes] = await Promise.all([
-          supabase.from("saved_listings").select("id", { count: 'exact', head: true }).eq("user_id", user.id),
-          supabase.from("bookings").select("id", { count: 'exact', head: true }).eq("user_id", user.id),
-          supabase.from("reviews").select("id", { count: 'exact', head: true }).eq("user_id", user.id)
-        ]);
+        // Wrap fetching in a timeout
+        const dataFetch = (async () => {
+          // 1. Fetch counts & Data for Charts
+          const [savedRes, bookingsRes, reviewsRes] = await Promise.all([
+            supabase.from("saved_listings").select("listing_id, listings(title, category)").eq("user_id", user.id),
+            supabase.from("bookings").select("id, created_at, listings(title)").eq("user_id", user.id),
+            supabase.from("reviews").select("id, created_at, listing_id, rating, listings(title, category)").eq("user_id", user.id)
+          ]);
 
-        if (savedRes.count !== null) setSavedCount(savedRes.count);
-        if (bookingsRes.count !== null) setBookingsCount(bookingsRes.count);
-        if (reviewsRes.count !== null) setReviewsCount(reviewsRes.count);
-        
-        // Fame points (Mock logic for now, could be based on reviews/bookings)
-        setFamePoints((reviewsRes.count || 0) * 100 + (bookingsRes.count || 0) * 50);
+          if (!isMounted) return;
 
-        // 2. Fetch recent listings (recommendations)
-        const { data: listingsData } = await supabase
-          .from("listings")
-          .select("*")
-          .eq("is_active", true)
-          .order("created_at", { ascending: false })
-          .limit(3);
-        
-        if (listingsData) setRecentListings(listingsData as Listing[]);
-
-        // 3. Fetch simulated activity (since we don't have a dedicated activity table yet)
-        const { data: recentBookings } = await supabase
-          .from("bookings")
-          .select("*, listings(title)")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(2);
+          // Process Counts
+          setSavedCount(savedRes.data?.length || 0);
+          setBookingsCount(bookingsRes.data?.length || 0);
+          setReviewsCount(reviewsRes.data?.length || 0);
           
-        const { data: recentReviews } = await supabase
-          .from("reviews")
-          .select("*, listings(title)")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(2);
+          const currentPoints = (reviewsRes.data?.length || 0) * 100 + (bookingsRes.data?.length || 0) * 50;
+          setFamePoints(currentPoints);
 
-        const combinedActivity: Activity[] = [
-          ...(recentBookings || []).map(b => ({
-            id: `b-${b.id}`,
-            type: 'booking' as const,
-            content: t('dashboard.user.activity.bookingConfirmed').replace('{title}', b.listings?.title || ''),
-            date: b.created_at
-          })),
-          ...(recentReviews || []).map(r => ({
-            id: `r-${r.id}`,
-            type: 'review' as const,
-            content: t('dashboard.user.activity.reviewLeft')
-              .replace('{rating}', r.rating.toString())
-              .replace('{title}', r.listings?.title || ''),
-            date: r.created_at
-          }))
-        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          // 2. Process Points History (Last 4 months)
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const now = new Date();
+          const history = [];
+          
+          for (let i = 3; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const mName = months[d.getMonth()];
+            
+            // Calculate points for this month and earlier
+            // history needs cumulative points
+            const monthDate = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+            
+            const reviewsCountUpTo = reviewsRes.data?.filter(r => new Date(r.created_at) <= monthDate).length || 0;
+            const bookingsCountUpTo = bookingsRes.data?.filter(b => new Date(b.created_at) <= monthDate).length || 0;
+            
+            history.push({
+              name: mName,
+              points: (reviewsCountUpTo * 100) + (bookingsCountUpTo * 50)
+            });
+          }
+          setPointsHistory(history);
 
-        setActivities(combinedActivity);
+          // 3. Process Category Interests
+          const categories: Record<string, number> = {};
+          
+          // Count from saved listings
+          savedRes.data?.forEach(item => {
+            const listingsData = item.listings;
+            const cat = Array.isArray(listingsData) 
+              ? (listingsData[0] as { category: string } | undefined)?.category 
+              : (listingsData as { category: string } | null)?.category;
+            
+            if (cat) categories[cat] = (categories[cat] || 0) + 1;
+          });
+          
+          // Count from reviews (weighted more)
+          reviewsRes.data?.forEach(item => {
+            const listingsData = item.listings;
+            const cat = Array.isArray(listingsData) 
+              ? (listingsData[0] as { category: string } | undefined)?.category 
+              : (listingsData as { category: string } | null)?.category;
+            
+            if (cat) categories[cat] = (categories[cat] || 0) + 2;
+          });
+
+          const colors = ['#3b82f6', '#10b981', '#f43f5e', '#eab308', '#a855f7', '#f97316'];
+          const interestArray = Object.entries(categories)
+            .map(([name, value], index) => ({
+              name: t(`category.${name.toLowerCase()}`) || name,
+              value,
+              color: colors[index % colors.length]
+            }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 4);
+
+          // Fallback if no interests yet
+          if (interestArray.length === 0) {
+            interestArray.push({ name: t('dashboard.user.activity.empty'), value: 1, color: '#CBD5E1' });
+          }
+          setCategoryInterest(interestArray);
+
+          // 4. Fetch recent listings (recommendations)
+          const { data: listingsData } = await supabase
+            .from("listings")
+            .select("*")
+            .eq("is_active", true)
+            .order("created_at", { ascending: false })
+            .limit(3);
+          
+          if (listingsData && isMounted) setRecentListings(listingsData as Listing[]);
+
+          // 5. Build activity timeline
+          const combinedActivity: Activity[] = [
+            ...(bookingsRes.data || []).map(b => {
+              const bWithListings = b as unknown as { id: string; created_at: string; listings?: { title: string } | { title: string }[] };
+              const listingsData = bWithListings.listings;
+              const title = Array.isArray(listingsData)
+                ? (listingsData[0] as { title: string } | undefined)?.title
+                : (listingsData as { title: string } | undefined)?.title;
+                
+              return {
+                id: `b-${b.id}`,
+                type: 'booking' as const,
+                content: t('dashboard.user.activity.bookingConfirmed').replace('{title}', title || t('common.listing')),
+                date: b.created_at
+              };
+            }),
+            ...(reviewsRes.data || []).map(r => {
+              const rWithListings = r as unknown as { id: string; created_at: string; rating?: number; listings?: { title: string } | { title: string }[] };
+              const listingsData = rWithListings.listings;
+              const title = Array.isArray(listingsData)
+                ? (listingsData[0] as { title: string } | undefined)?.title
+                : (listingsData as { title: string } | undefined)?.title;
+                
+              return {
+                id: `r-${r.id}`,
+                type: 'review' as const,
+                content: t('dashboard.user.activity.reviewLeft')
+                  .replace('{rating}', rWithListings.rating?.toString() || '5')
+                  .replace('{title}', title || t('common.listing')),
+                date: r.created_at
+              };
+            })
+          ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
+
+          if (isMounted) setActivities(combinedActivity);
+        })();
+
+        await Promise.race([dataFetch, timeoutPromise]);
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error("Dashboard error:", error);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
-    if (user) {
-      fetchData();
-    } else {
-      setLoading(false);
-    }
+
+    fetchData();
+    return () => { isMounted = false; };
   }, [user, t]);
 
   const displayName = profile?.full_name ?? user?.email?.split("@")[0] ?? "there";
